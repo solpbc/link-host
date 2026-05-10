@@ -1,0 +1,18 @@
+name = "link-host"
+main = "src/index.ts"
+compatibility_date = "2026-05-01"
+
+# link.solpbc.org — the universal native-app handoff host for sol pbc.
+# Single environment (no staging/prod split), matching the spl-relay
+# precedent. Self-hosters who fork should replace the route below with
+# their own hostname and `wrangler deploy` under their own CF account.
+[[routes]]
+pattern = "link.solpbc.org"
+custom_domain = true
+
+# Observability tail covers operational debugging. Worker logs at this tail
+# level intentionally surface only `<method> <path> <status>` per the
+# served route — no payload, no headers, no UA. The page's URL fragment is
+# never seen because RFC 3986 fragments are processed client-side.
+[observability]
+enabled = true

@@ -1,0 +1,161 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright (c) 2026 sol pbc
+
+// Entry point for the link-host Worker — sol pbc's universal native-app
+// handoff host at https://link.solpbc.org.
+//
+// Routes:
+//   GET  /.well-known/apple-app-site-association  →  AASA JSON
+//   GET  /.well-known/assetlinks.json             →  assetlinks JSON
+//   GET  /p                                       →  install-fallback page
+//   GET  /                                        →  bare host page
+//   GET  /robots.txt                              →  robots.txt
+//   *    *                                        →  404
+//   POST/PUT/DELETE/PATCH *                       →  405
+//
+// Privacy invariants enforced by this Worker:
+//   - No cookies set, anywhere.
+//   - No analytics, no third-party scripts in served content.
+//   - Strict CSP on HTML responses; `connect-src 'none'` so any future
+//     client-side script cannot beacon out.
+//   - The URL fragment is processed client-side per RFC 3986 — the Worker
+//     never sees it.
+//   - Worker logs (CF tail) carry method + path + status only by what we
+//     log here (we do not log anything explicitly; CF's built-in tail
+//     line is structural and excludes the fragment by HTTP semantics).
+//
+// See `cpo/specs/in-flight/link-solpbc-org-host.md` in the extro org for
+// the full design.
+
+import { AASA } from "./aasa";
+import { ASSETLINKS } from "./assetlinks";
+import { renderIndex } from "./index-page";
+import { renderLanding } from "./landing";
+import { ROBOTS } from "./robots";
+
+// CSP for HTML responses. Locked per spec:
+// - `connect-src 'none'` — makes accidental beaconing impossible.
+// - `style-src 'self' 'unsafe-inline'` — we inline our CSS so the page
+//   renders without a separate request; the inline content is verifiable
+//   in the public repo. No third-party stylesheets.
+// - `script-src 'self'` — no inline scripts; any future script would be
+//   served from this origin and visible in the repo.
+// - `frame-ancestors 'none'` — never embed this in another site.
+// - `img-src 'self'` — no third-party images. Today the pages use no
+//   images at all; the directive sets the ceiling for future copy
+//   iterations.
+const HTML_CSP =
+	"default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
+
+const COMMON_SECURITY_HEADERS: HeadersInit = {
+	"X-Content-Type-Options": "nosniff",
+	"Referrer-Policy": "no-referrer",
+	"Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+	"X-Frame-Options": "DENY",
+	"Permissions-Policy": "interest-cohort=(), browsing-topics=()",
+};
+
+function htmlResponse(body: string, status = 200): Response {
+	return new Response(body, {
+		status,
+		headers: {
+			"Content-Type": "text/html; charset=utf-8",
+			"Content-Security-Policy": HTML_CSP,
+			"Cache-Control": "public, max-age=300",
+			...COMMON_SECURITY_HEADERS,
+		},
+	});
+}
+
+function jsonResponse(body: unknown, status = 200): Response {
+	// AASA + assetlinks MUST be `application/json` with no redirects and a
+	// caching window long enough to survive Apple's polling — 1 hour per
+	// spec. Apple aggressively caches AASA on first install; misconfigured
+	// caching here can brick the handoff for hours. See spec §technical
+	// approach for the rationale.
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: {
+			"Content-Type": "application/json",
+			"Cache-Control": "public, max-age=3600",
+			...COMMON_SECURITY_HEADERS,
+		},
+	});
+}
+
+function textResponse(body: string, status = 200): Response {
+	return new Response(body, {
+		status,
+		headers: {
+			"Content-Type": "text/plain; charset=utf-8",
+			"Cache-Control": "public, max-age=3600",
+			...COMMON_SECURITY_HEADERS,
+		},
+	});
+}
+
+function methodNotAllowed(): Response {
+	// 405 must include an Allow header per RFC 7231 §6.5.5.
+	return new Response("method not allowed", {
+		status: 405,
+		headers: {
+			Allow: "GET, HEAD",
+			"Content-Type": "text/plain; charset=utf-8",
+			...COMMON_SECURITY_HEADERS,
+		},
+	});
+}
+
+function notFound(): Response {
+	return new Response("not found", {
+		status: 404,
+		headers: {
+			"Content-Type": "text/plain; charset=utf-8",
+			...COMMON_SECURITY_HEADERS,
+		},
+	});
+}
+
+export default {
+	async fetch(request: Request): Promise<Response> {
+		const url = new URL(request.url);
+		const method = request.method.toUpperCase();
+
+		// Reject body-bearing / mutating methods up front. HEAD is allowed
+		// implicitly by passing through to GET handling; CF Workers handle
+		// HEAD by stripping the body from the GET response.
+		if (method !== "GET" && method !== "HEAD") {
+			return methodNotAllowed();
+		}
+
+		// AASA — Apple Universal Links manifest. No redirects (Apple rejects
+		// redirected AASA). Exact MIME `application/json`.
+		if (url.pathname === "/.well-known/apple-app-site-association") {
+			return jsonResponse(AASA);
+		}
+
+		// Android assetlinks — App Links verification manifest.
+		if (url.pathname === "/.well-known/assetlinks.json") {
+			return jsonResponse(ASSETLINKS);
+		}
+
+		// Install-fallback page. Only reached when iOS / Android did NOT
+		// match the URL against an installed sol pbc app. UA detection is
+		// server-side; we use it once to pick the primary CTA, then the
+		// header is gone.
+		if (url.pathname === "/p") {
+			const ua = request.headers.get("User-Agent") ?? "";
+			return htmlResponse(renderLanding(ua));
+		}
+
+		if (url.pathname === "/") {
+			return htmlResponse(renderIndex());
+		}
+
+		if (url.pathname === "/robots.txt") {
+			return textResponse(ROBOTS);
+		}
+
+		return notFound();
+	},
+} satisfies ExportedHandler;
