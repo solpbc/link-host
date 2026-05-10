@@ -25,11 +25,17 @@ const CTA_IOS = "get solstone for iPhone";
 const CTA_ANDROID = "get solstone for Android";
 const FOOTER = "sol pbc · open source · this page collects nothing.";
 
-// Placeholder store URLs. The iOS bundle ID + Android package come from
-// CSO (extro request `req_hbpmzyz5`); once the apps are published, swap
-// these URLs for the real App Store and Play Store listings via PR.
+// Store URLs. Bundle / package names are confirmed (`app.solstone.swift`
+// for iOS, `app.solstone.android` for Android — CPO decision
+// `260510-cpo-link-bundle-id-namespace-app-solstone-confirmed`), but the
+// listings themselves don't exist yet — App Store listing follows the
+// first iOS submission, Play Store listing follows Google Play developer
+// enrollment + first Android build. The Play Store URL uses the confirmed
+// package name and will resolve once the listing publishes; the iOS URL
+// stays on the search-style `/app/solstone` slug until the App Store
+// numeric id is minted on first submission.
 const IOS_STORE_URL = "https://apps.apple.com/app/solstone";
-const ANDROID_STORE_URL = "https://play.google.com/store/apps/details?id=org.solpbc.solstone";
+const ANDROID_STORE_URL = "https://play.google.com/store/apps/details?id=app.solstone.android";
 
 type Platform = "ios" | "android" | "other";
 

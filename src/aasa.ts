@@ -7,11 +7,12 @@
 // only if Apple changes it. See `cpo/specs/in-flight/link-solpbc-org-host.md`
 // in the extro org for the locked schema and the rationale.
 //
-// Bundle IDs below are placeholders pending Apple Developer Program
-// enrollment by CSO (extro request `req_hbpmzyz5`). Once CSO publishes
-// `<TEAM_ID>` and `<BUNDLE_ID>`, replace `0000000000.org.solpbc.solstone`
-// with the actual value via PR + manual deploy. Validators will fail on
-// bundle-ID lookup until then; file shape + headers still pass.
+// Bundle ID is the sol pbc paid Apple Developer Program team (`7QCG8V4M6H`)
+// crossed with the minted `app.solstone.swift` bundle (ASC ID `MCH2T65ZQL`,
+// Push + App Groups capabilities provisioned). Confirmed 2026-05-10 via
+// CPO decision `260510-cpo-link-bundle-id-namespace-app-solstone-confirmed`
+// (extro request `req_lprtek4k`); canonical signing architecture in
+// `shared/vendors/apple.md` §signing architecture.
 //
 // Day-1 claim: `/p` for the solstone spl pair-flow, with `/p2` reserved
 // for a future v2 of the pair flow. Additional sol pbc apps add their own
@@ -21,7 +22,7 @@ export const AASA = {
 	applinks: {
 		details: [
 			{
-				appIDs: ["0000000000.org.solpbc.solstone"],
+				appIDs: ["7QCG8V4M6H.app.solstone.swift"],
 				components: [
 					{ "/": "/p", comment: "spl pair-flow universal link" },
 					{ "/": "/p2", comment: "reserved — future spl pair-flow v2" },
@@ -29,5 +30,5 @@ export const AASA = {
 			},
 		],
 	},
-	webcredentials: { apps: ["0000000000.org.solpbc.solstone"] },
+	webcredentials: { apps: ["7QCG8V4M6H.app.solstone.swift"] },
 } as const;

@@ -27,10 +27,13 @@ one-line PR.
 
 - **Operator:** sol pbc (deployed at `https://link.solpbc.org`).
 - **License:** [AGPL-3.0-only](LICENSE).
-- **Status:** initial deploy with placeholder bundle IDs pending Apple
-  Developer Program + Google Play Console enrollment. AASA + assetlinks will
-  fail validator bundle-ID lookup until those values land. File shape +
-  headers + landing page validate cleanly today.
+- **Status:** AASA carries the confirmed iOS values
+  (`7QCG8V4M6H.app.solstone.swift` — sol pbc paid Apple Developer team
+  crossed with the minted bundle). assetlinks carries the confirmed Android
+  package name (`app.solstone.android`); the signing-cert SHA256 stays on
+  placeholder until Google Play developer enrollment + first Android build.
+  File shape + headers + landing page validate cleanly today; the iOS
+  Universal Link handoff is wireable now.
 
 ## privacy properties
 
@@ -117,9 +120,8 @@ HTTPS cert is auto-provisioned by Cloudflare.
 
 | who | file | what they edit |
 |---|---|---|
-| CSO | `src/aasa.ts` | `<TEAM_ID>.<BUNDLE_ID>` after Apple Developer Program enrollment |
-| CSO | `src/assetlinks.ts` | `<ANDROID_PACKAGE_NAME>` + `<SHA256_OF_SIGNING_CERT>` after Play Console enrollment |
-| CMO | `src/landing.ts` | landing page copy slots (H1, sub, CTAs, footer) |
+| CSO | `src/assetlinks.ts` | `sha256_cert_fingerprints` once Google Play developer enrollment + the first Android upload-signing key are minted |
+| CMO | `src/landing.ts` | landing page copy slots (H1, sub, CTAs, footer); App Store / Play Store URLs once each listing is live |
 | CMO | `src/index-page.ts` | bare host page copy |
 
 All edits flow PR → manual deploy.
