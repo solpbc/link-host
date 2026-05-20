@@ -8,6 +8,7 @@
 //   GET  /.well-known/apple-app-site-association  →  AASA JSON
 //   GET  /.well-known/assetlinks.json             →  assetlinks JSON
 //   GET  /p                                       →  install-fallback page
+//   GET  /x/sync                                  →  install-fallback page (extro)
 //   GET  /                                        →  bare host page
 //   GET  /robots.txt                              →  robots.txt
 //   *    *                                        →  404
@@ -31,6 +32,7 @@ import { AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
 import { renderIndex } from "./index-page";
 import { renderLanding } from "./landing";
+import { renderExtroSync } from "./landing-extro";
 import { ROBOTS } from "./robots";
 
 // CSP for HTML responses. Locked per spec:
@@ -146,6 +148,12 @@ export default {
 		if (url.pathname === "/p") {
 			const ua = request.headers.get("User-Agent") ?? "";
 			return htmlResponse(renderLanding(ua));
+		}
+
+		// Extro install-fallback page. Only reached when iOS did NOT match
+		// the URL against an installed extro-mobile app.
+		if (url.pathname === "/x/sync") {
+			return htmlResponse(renderExtroSync());
 		}
 
 		if (url.pathname === "/") {

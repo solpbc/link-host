@@ -15,18 +15,20 @@
 // `shared/vendors/apple.md` §signing architecture.
 //
 // Day-1 claim: `/p` for the solstone spl pair-flow, with `/p2` reserved
-// for a future v2 of the pair flow. Additional sol pbc apps add their own
-// blocks to `applinks.details` and their own paths.
+// for a future v2 of the pair flow, plus extro-mobile claiming `/x/sync`.
+// Additional sol pbc apps add their own blocks to `applinks.details` and
+// their own paths.
 
 export const AASA = {
 	applinks: {
 		details: [
 			{
 				appIDs: ["7QCG8V4M6H.app.solstone.swift"],
-				components: [
-					{ "/": "/p", comment: "spl pair-flow universal link" },
-					{ "/": "/p2", comment: "reserved — future spl pair-flow v2" },
-				],
+				components: [{ "/": "/p" }, { "/": "/p2" }],
+			},
+			{
+				appIDs: ["7QCG8V4M6H.org.solpbc.extro"],
+				components: [{ "/": "/x/sync" }],
 			},
 		],
 	},
