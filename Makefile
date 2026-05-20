@@ -7,7 +7,7 @@
 .PHONY: install typecheck lint deploy dev
 
 install:
-	npm ci
+	npm ci --ignore-scripts --no-audit --no-fund
 
 typecheck:
 	npm run typecheck
