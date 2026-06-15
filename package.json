@@ -2,7 +2,7 @@
   "name": "link-host",
   "version": "0.0.0",
   "private": true,
-  "description": "link.solpbc.org — universal native-app handoff host for sol pbc",
+  "description": "Universal native-app handoff host for sol pbc (solstone on go.solstone.app, extro on link.solpbc.org)",
   "license": "AGPL-3.0-only",
   "type": "module",
   "main": "src/index.ts",
@@ -11,12 +11,15 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src/",
-    "format": "biome format --write src/"
+    "format": "biome format --write src/",
+    "test": "vitest run",
+    "ci": "npm run typecheck && npm run lint && npm run test"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
     "@cloudflare/workers-types": "^4.20260101.0",
     "typescript": "^5.5.0",
+    "vitest": "^4.1.9",
     "wrangler": "^4.0.0"
   }
 }

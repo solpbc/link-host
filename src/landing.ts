@@ -64,7 +64,7 @@ export function renderLanding(userAgent: string): string {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>finish pairing — link.solpbc.org</title>
+	<title>finish pairing — go.solstone.app</title>
 	<meta name="robots" content="noindex, nofollow">
 	<style>
 		:root {

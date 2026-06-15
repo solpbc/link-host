@@ -2,12 +2,16 @@ name = "link-host"
 main = "src/index.ts"
 compatibility_date = "2026-05-01"
 
-# link.solpbc.org — the universal native-app handoff host for sol pbc.
-# Single environment (no staging/prod split), matching the spl-relay
-# precedent. Self-hosters who fork should replace the route below with
-# their own hostname and `wrangler deploy` under their own CF account.
+# go.solstone.app serves the solstone surface; link.solpbc.org serves the
+# extro surface. Single environment (no staging/prod split), matching the
+# spl-relay precedent. Self-hosters who fork should replace the routes below
+# with their own hostnames and `wrangler deploy` under their own CF account.
 [[routes]]
 pattern = "link.solpbc.org"
+custom_domain = true
+
+[[routes]]
+pattern = "go.solstone.app"
 custom_domain = true
 
 # Observability tail covers operational debugging. Worker logs at this tail

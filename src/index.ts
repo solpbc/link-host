@@ -2,17 +2,21 @@
 // Copyright (c) 2026 sol pbc
 
 // Entry point for the link-host Worker — sol pbc's universal native-app
-// handoff host at https://link.solpbc.org.
+// handoff surfaces dispatched on request host.
 //
 // Routes:
-//   GET  /.well-known/apple-app-site-association  →  AASA JSON
-//   GET  /.well-known/assetlinks.json             →  assetlinks JSON
-//   GET  /p                                       →  install-fallback page
-//   GET  /x/sync                                  →  install-fallback page (extro)
-//   GET  /                                        →  bare host page
-//   GET  /robots.txt                              →  robots.txt
-//   *    *                                        →  404
-//   POST/PUT/DELETE/PATCH *                       →  405
+//   go.solstone.app (solstone universal-link surface):
+//     GET  /.well-known/apple-app-site-association  →  solstone AASA
+//     GET  /.well-known/assetlinks.json             →  solstone assetlinks
+//     GET  /p                                       →  solstone install-fallback
+//   link.solpbc.org (extro surface):
+//     GET  /.well-known/apple-app-site-association  →  extro AASA
+//     GET  /x/sync                                  →  extro install-fallback
+//   both hosts:
+//     GET  /                                        →  bare host page (host-derived)
+//     GET  /robots.txt                              →  robots.txt
+//     *    *                                        →  404
+//     POST/PUT/DELETE/PATCH *                       →  405
 //
 // Privacy invariants enforced by this Worker:
 //   - No cookies set, anywhere.
@@ -28,12 +32,20 @@
 // See `cpo/specs/in-flight/link-solpbc-org-host.md` in the extro org for
 // the full design.
 
-import { AASA } from "./aasa";
+import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
 import { renderIndex } from "./index-page";
 import { renderLanding } from "./landing";
 import { renderExtroSync } from "./landing-extro";
 import { ROBOTS } from "./robots";
+
+type HostKind = "solstone" | "extro" | "unknown";
+
+function hostKind(hostname: string): HostKind {
+	if (hostname === "go.solstone.app") return "solstone";
+	if (hostname === "link.solpbc.org") return "extro";
+	return "unknown";
+}
 
 // CSP for HTML responses. Locked per spec:
 // - `connect-src 'none'` — makes accidental beaconing impossible.
@@ -130,15 +142,21 @@ export default {
 			return methodNotAllowed();
 		}
 
+		const host = url.hostname;
+		const kind = hostKind(host);
+
 		// AASA — Apple Universal Links manifest. No redirects (Apple rejects
 		// redirected AASA). Exact MIME `application/json`.
 		if (url.pathname === "/.well-known/apple-app-site-association") {
-			return jsonResponse(AASA);
+			if (kind === "solstone") return jsonResponse(SOLSTONE_AASA);
+			if (kind === "extro") return jsonResponse(EXTRO_AASA);
+			return notFound();
 		}
 
 		// Android assetlinks — App Links verification manifest.
 		if (url.pathname === "/.well-known/assetlinks.json") {
-			return jsonResponse(ASSETLINKS);
+			if (kind === "solstone") return jsonResponse(ASSETLINKS);
+			return notFound();
 		}
 
 		// Install-fallback page. Only reached when iOS / Android did NOT
@@ -146,6 +164,7 @@ export default {
 		// server-side; we use it once to pick the primary CTA, then the
 		// header is gone.
 		if (url.pathname === "/p") {
+			if (kind !== "solstone") return notFound();
 			const ua = request.headers.get("User-Agent") ?? "";
 			return htmlResponse(renderLanding(ua));
 		}
@@ -153,11 +172,12 @@ export default {
 		// Extro install-fallback page. Only reached when iOS did NOT match
 		// the URL against an installed extro-mobile app.
 		if (url.pathname === "/x/sync") {
+			if (kind !== "extro") return notFound();
 			return htmlResponse(renderExtroSync());
 		}
 
 		if (url.pathname === "/") {
-			return htmlResponse(renderIndex());
+			return htmlResponse(renderIndex(host));
 		}
 
 		if (url.pathname === "/robots.txt") {

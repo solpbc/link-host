@@ -14,23 +14,34 @@
 // (extro request `req_lprtek4k`); canonical signing architecture in
 // `shared/vendors/apple.md` §signing architecture.
 //
-// Day-1 claim: `/p` for the solstone spl pair-flow, with `/p2` reserved
-// for a future v2 of the pair flow, plus extro-mobile claiming `/x/sync`.
-// Additional sol pbc apps add their own blocks to `applinks.details` and
-// their own paths.
+// Split claims: the solstone payload (served on go.solstone.app) claims `/p`
+// for the solstone spl pair-flow, reserves `/p2` for a future v2, and carries
+// webcredentials. The extro payload (served on link.solpbc.org) claims
+// `/x/sync` and carries no webcredentials. Additional sol pbc apps add their
+// own blocks to the relevant host's `applinks.details` and their own paths.
 
-export const AASA = {
+const SOLSTONE_APP_ID = "7QCG8V4M6H.app.solstone.swift";
+const EXTRO_APP_ID = "7QCG8V4M6H.org.solpbc.extro";
+
+export const SOLSTONE_AASA = {
 	applinks: {
 		details: [
 			{
-				appIDs: ["7QCG8V4M6H.app.solstone.swift"],
+				appIDs: [SOLSTONE_APP_ID],
 				components: [{ "/": "/p" }, { "/": "/p2" }],
 			},
+		],
+	},
+	webcredentials: { apps: [SOLSTONE_APP_ID] },
+} as const;
+
+export const EXTRO_AASA = {
+	applinks: {
+		details: [
 			{
-				appIDs: ["7QCG8V4M6H.org.solpbc.extro"],
+				appIDs: [EXTRO_APP_ID],
 				components: [{ "/": "/x/sync" }],
 			},
 		],
 	},
-	webcredentials: { apps: ["7QCG8V4M6H.app.solstone.swift"] },
 } as const;

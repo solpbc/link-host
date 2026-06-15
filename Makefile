@@ -4,7 +4,7 @@
 # exposes them under the conventional `make <target>` shape that sol pbc's
 # tooling (hopper, install playbooks) expects across repos.
 
-.PHONY: install typecheck lint deploy dev
+.PHONY: install typecheck lint test ci deploy dev
 
 install:
 	npm ci --ignore-scripts --no-audit --no-fund
@@ -14,6 +14,12 @@ typecheck:
 
 lint:
 	npm run lint
+
+test:
+	npm run test
+
+ci:
+	npm run ci
 
 deploy:
 	npm run deploy
