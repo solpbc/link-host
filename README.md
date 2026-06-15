@@ -27,6 +27,20 @@ one-line PR.
 
 - **Operator:** sol pbc (deployed at `https://link.solpbc.org`).
 - **License:** [AGPL-3.0-only](LICENSE).
+- **Not the relay.** `link.solpbc.org` (this host) and `link.solstone.app` (the
+  hosted [spl](https://github.com/solpbc/spl) `spl-relay`) are two different
+  services on two different domains, and the distinction is load-bearing:
+  - **`link.solpbc.org` = native-app handoff.** Universal/App Link host — serves
+    the AASA + `assetlinks.json`, and is the host in every pair-flow QR
+    (`https://link.solpbc.org/p#…`). A scanned QR opens the app *here*. This host
+    holds no keys, sees no payload, and runs no relay.
+  - **`link.solstone.app` = the relay.** The off-LAN rendezvous endpoint a paired
+    device dials once it's reaching home from away (`/enroll`, `/session`,
+    `/tunnel`, the JWT `iss`, `/.well-known/jwks.json`). Lives in the `spl` repo.
+
+  Rule of thumb: a QR/pair-link host is always `link.solpbc.org`; anything that
+  enrolls, issues a token, or carries tunnel bytes is always `link.solstone.app`.
+  Never cross the two.
 - **Status:** AASA carries the confirmed iOS values
   (`7QCG8V4M6H.app.solstone.swift` — sol pbc paid Apple Developer team
   crossed with the minted bundle). assetlinks carries the confirmed Android
