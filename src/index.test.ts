@@ -55,10 +55,20 @@ describe("link-host Worker", () => {
 
 	it("serves solstone assetlinks only on go.solstone.app", async () => {
 		const res = await get("https://go.solstone.app/.well-known/assetlinks.json");
-		const body = await res.text();
+		const body = (await res.json()) as {
+			target: { package_name: string; sha256_cert_fingerprints: string[] };
+		}[];
 
+		// The association is the App Links security contract: the shipped phone
+		// package, the certificate that signs the off-Play release, and nothing
+		// else claimed. Pin all three — a silent regression to a placeholder or
+		// a stray package claim breaks verification on real devices.
 		expect(res.status).toBe(200);
-		expect(body).toContain("app.solstone.android");
+		expect(body).toHaveLength(1);
+		expect(body[0].target.package_name).toBe("app.solstone.observer.phone");
+		expect(body[0].target.sha256_cert_fingerprints).toEqual([
+			"12:DF:E3:2F:91:F7:18:25:90:09:27:37:91:7E:D7:19:33:7F:8F:9B:11:63:24:5B:3B:DC:34:79:A6:BE:26:60",
+		]);
 	});
 
 	it("does not serve the solstone landing page on link.solpbc.org", async () => {
