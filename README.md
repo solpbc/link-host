@@ -53,11 +53,11 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
 - **Status:** solstone AASA carries the confirmed iOS value
   (`7QCG8V4M6H.app.solstone.swift` — sol pbc paid Apple Developer team crossed
   with the minted bundle). extro AASA carries `7QCG8V4M6H.org.solpbc.extro`.
-  assetlinks carries the confirmed Android package name (`app.solstone.android`)
-  on `go.solstone.app`; the signing-cert SHA256 stays on placeholder until
-  Google Play developer enrollment + first Android build. File shape + headers +
-  landing pages validate cleanly today; the iOS Universal Link handoff is
-  wireable now.
+  assetlinks on `go.solstone.app` claims the shipped Android phone package
+  (`app.solstone.observer.phone`) and the certificate that signs the current
+  release distributed outside Play; the watch, glasses, and validation packages
+  are deliberately unclaimed. File shape + headers + landing pages validate
+  cleanly today; the iOS Universal Link handoff is wireable now.
 
 ## privacy properties
 
@@ -110,7 +110,7 @@ src/
   index.ts            CF Worker — host-aware routes, headers, CSP
   index.test.ts       Worker route tests
   aasa.ts             two host-specific AASA payloads, solstone + extro
-  assetlinks.ts       solstone assetlinks JSON (placeholder cert SHA256)
+  assetlinks.ts       solstone assetlinks JSON (phone package + release cert)
   landing.ts          /p HTML — UA-aware solstone install-fallback page
   landing-extro.ts    /x/sync HTML — extro install-fallback page
   index-page.ts       / HTML — bare host page
@@ -164,7 +164,7 @@ certs are auto-provisioned by Cloudflare.
 
 | who | file | what they edit |
 |---|---|---|
-| CSO | `src/assetlinks.ts` | `sha256_cert_fingerprints` once Google Play developer enrollment + the first Android upload-signing key are minted |
+| CSO | `src/assetlinks.ts` | the Android package claim + `sha256_cert_fingerprints` — including adding the Play App Signing certificate alongside the existing one if Play issues a distinct one at first upload |
 | CMO | `src/landing.ts` | solstone landing page copy slots (H1, sub, CTAs, footer); App Store / Play Store URLs once each listing is live |
 | CMO | `src/landing-extro.ts` | extro fallback copy |
 | CMO | `src/index-page.ts` | bare host page copy |
@@ -191,7 +191,7 @@ After deploy, check:
 
 1. **Solstone AASA shape:** [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) — paste `https://go.solstone.app` and confirm the file parses. Bundle-ID lookup will fail until Apple Developer Program enrollment ships; file shape + headers should pass.
 2. **Extro AASA shape:** paste `https://link.solpbc.org` and confirm only the extro claim parses.
-3. **assetlinks shape:** [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) — validate `https://go.solstone.app`. Same caveat for package + cert.
+3. **assetlinks shape:** [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) — validate `https://go.solstone.app`. The phone package and certificate are both real, so this should verify rather than just parse. Verification on a real device additionally requires the installed app to declare the matching `autoVerify` App Link intent filter.
 4. **CSP:** open `https://go.solstone.app/p` and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself).
 
 ## see also
