@@ -26,16 +26,19 @@ const CTA_ANDROID = "get solstone for Android";
 const FOOTER = "sol pbc · open source · this page collects nothing.";
 
 // Store URLs. Bundle / package names are confirmed (`app.solstone.swift`
-// for iOS, `app.solstone.android` for Android — CPO decision
-// `260510-cpo-link-bundle-id-namespace-app-solstone-confirmed`), but the
-// listings themselves don't exist yet — App Store listing follows the
-// first iOS submission, Play Store listing follows Google Play developer
-// enrollment + first Android build. The Play Store URL uses the confirmed
-// package name and will resolve once the listing publishes; the iOS URL
-// stays on the search-style `/app/solstone` slug until the App Store
-// numeric id is minted on first submission.
+// for iOS; `app.solstone.observer.phone` for Android — the shipped phone
+// app's application ID, per CPO decision
+// `260716-cpo-android-app-links-target-shipped-phone-package`, superseding
+// the never-shipped `app.solstone.android` value), but the listings
+// themselves don't exist yet — App Store listing follows the first iOS
+// submission, Play Store listing follows Google Play developer enrollment
+// (completed 2026-06-05/06) + first Android build submitted to Play. The
+// Play Store URL uses the confirmed package name and will resolve once the
+// listing publishes; the iOS URL stays on the search-style `/app/solstone`
+// slug until the App Store numeric id is minted on first submission.
 const IOS_STORE_URL = "https://apps.apple.com/app/solstone";
-const ANDROID_STORE_URL = "https://play.google.com/store/apps/details?id=app.solstone.android";
+const ANDROID_STORE_URL =
+	"https://play.google.com/store/apps/details?id=app.solstone.observer.phone";
 
 type Platform = "ios" | "android" | "other";
 
