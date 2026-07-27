@@ -62,8 +62,8 @@ A change that weakens any of them is the wrong change regardless of size:
 
 ## Coding principles (sol pbc engineering standards, inlined)
 
-Hopper lodes can't read the org's private engineering standards, so the load-bearing
-ones live here:
+These are the load-bearing sol pbc engineering standards for this repo, stated
+here so they stand on their own:
 
 - **KISS / YAGNI.** This is intentionally a tiny, dependency-light Worker. Don't
   add config, abstraction, or "future-proofing" for cases that don't exist. A new
