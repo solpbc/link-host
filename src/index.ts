@@ -29,7 +29,7 @@
 //     log here (we do not log anything explicitly; CF's built-in tail
 //     line is structural and excludes the fragment by HTTP semantics).
 //
-// See `cpo/specs/in-flight/link-solpbc-org-host.md` in the extro org for
+// See the private product spec for this host for
 // the full design.
 
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";

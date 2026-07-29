@@ -74,8 +74,8 @@ here so they stand on their own:
   invent fallbacks for inputs the router already constrains.
 - **Reference, don't duplicate.** The README owns the route/privacy/content spec;
   this file owns coding guidance. Don't copy the route table into a third place
-  that has to be kept in sync. The full design lives in the extro org at
-  `cpo/specs/in-flight/link-solpbc-org-host.md` (private; reference only).
+  that has to be kept in sync. The full design lives in the private product
+  spec for this host (internal; reference only).
 - **Open source is the product.** This repo is public from first commit; the
   trust claim is "checksum the deployed Worker against this source." Keep every
   visible file clean of private operational context, internal paths, and machine

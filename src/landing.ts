@@ -13,10 +13,10 @@
 // client-side script would have to be served from this origin and would
 // be verifiable in the public repo.
 //
-// Copy slots (H1, SUB, CTA_IOS, CTA_ANDROID, FOOTER) are CMO-owned. The
-// values below are the CPO placeholders sufficient for first deploy. See
-// `cpo/specs/in-flight/link-solpbc-org-host.md` §literal copy in the
-// extro org. CMO iterates via PR + manual deploy.
+// Copy slots (H1, SUB, CTA_IOS, CTA_ANDROID, FOOTER) are brand-owned. The
+// values below are the product placeholders sufficient for first deploy;
+// the authoritative copy lives in the private product spec for this host,
+// §literal copy. Brand iterates via PR + manual deploy.
 
 const H1 = "finish pairing your phone with solstone.";
 const SUB =
@@ -27,8 +27,7 @@ const FOOTER = "sol pbc · open source · this page collects nothing.";
 
 // Store URLs. Bundle / package names are confirmed (`app.solstone.swift`
 // for iOS; `app.solstone.observer.phone` for Android — the shipped phone
-// app's application ID, per CPO decision
-// `260716-cpo-android-app-links-target-shipped-phone-package`, superseding
+// app's application ID, per an internal product decision, superseding
 // the never-shipped `app.solstone.android` value), but the listings
 // themselves don't exist yet — App Store listing follows the first iOS
 // submission, Play Store listing follows Google Play developer enrollment

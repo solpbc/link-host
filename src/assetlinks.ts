@@ -2,13 +2,11 @@
 // Copyright (c) 2026 sol pbc
 
 // assetlinks.json content served at `/.well-known/assetlinks.json`. The
-// shape is Google's; evolves only if Google changes it. See
-// `cpo/specs/in-flight/link-solpbc-org-host.md` in the extro org for the
-// locked schema and the rationale.
+// shape is Google's; evolves only if Google changes it. The locked schema
+// and the rationale live in the private product spec for this host.
 //
 // `package_name` = `app.solstone.observer.phone` is the application ID of the
-// shipped phone app (CPO decision
-// `260716-cpo-android-app-links-target-shipped-phone-package`). It supersedes
+// shipped phone app, per an internal product decision. It supersedes
 // the never-shipped `app.solstone.android` value for this claim.
 //
 // Scoped to the phone package on purpose: the watch, glasses, and validation

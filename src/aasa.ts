@@ -4,15 +4,14 @@
 // apple-app-site-association content served at
 // `/.well-known/apple-app-site-association`. JSON only (no signed pkcs7;
 // modern iOS handles plain JSON over HTTPS). The shape is Apple's; evolves
-// only if Apple changes it. See `cpo/specs/in-flight/link-solpbc-org-host.md`
-// in the extro org for the locked schema and the rationale.
+// only if Apple changes it. The locked schema and the rationale live in
+// the private product spec for this host.
 //
 // Bundle ID is the sol pbc paid Apple Developer Program team (`7QCG8V4M6H`)
 // crossed with the minted `app.solstone.swift` bundle (ASC ID `MCH2T65ZQL`,
-// Push + App Groups capabilities provisioned). Confirmed 2026-05-10 via
-// CPO decision `260510-cpo-link-bundle-id-namespace-app-solstone-confirmed`
-// (extro request `req_lprtek4k`); canonical signing architecture in
-// `shared/vendors/apple.md` §signing architecture.
+// Push + App Groups capabilities provisioned). Confirmed 2026-05-10 by an
+// internal product decision; the canonical signing architecture is recorded
+// in sol pbc's internal Apple vendor notes.
 //
 // Split claims: the solstone payload (served on go.solstone.app) claims `/p`
 // for the solstone spl pair-flow, reserves `/p2` for a future v2, and carries
