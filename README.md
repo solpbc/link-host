@@ -13,9 +13,10 @@ native apps, dispatched by request host:
 The solstone pair-flow QR host is now `https://go.solstone.app/p#…`. It moved
 off `link.solpbc.org` as a hard cutover before users existed.
 
-> link-host collects nothing. No analytics, no cookies, no third-party scripts.
-> Payload data rides in the URL fragment, which never reaches this server. Open
-> source so you can verify.
+> link-host adds no analytics, cookies, third-party scripts, or application
+> request logs. Its production config disables Cloudflare's persisted built-in
+> invocation events. Payload data rides in the URL fragment, which never enters
+> HTTP. Open source so you can verify.
 
 ## what it is
 
@@ -63,12 +64,17 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
 
 These are structural, not policy:
 
-1. **The URL fragment never reaches the server.** RFC 3986 — fragments are
-   processed client-side. The Worker tail sees only the path.
+1. **The URL fragment never enters HTTP.** RFC 3986 fragments are processed
+   client-side, so the pairing payload is absent from the request independently
+   of any logging configuration.
 2. **The pages collect nothing.** No cookies. No analytics. No third-party
    scripts. Strict CSP `connect-src 'none'` makes accidental beaconing
    impossible — the JS literally cannot make a network request.
-3. **Open source.** This repo is public from first commit. Verify the
+3. **Persisted invocation events are disabled.** Cloudflare's built-in
+   per-request invocation logs are explicitly off in `wrangler.toml`. Workers
+   Logs remains enabled for deliberate application error output; this source
+   currently emits no application logs.
+4. **Open source.** This repo is public from first commit. Verify the
    deployed Worker against this source by checksumming the script.
 
 External API calls from the Worker: none.

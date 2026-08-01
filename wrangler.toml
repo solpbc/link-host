@@ -14,9 +14,13 @@ custom_domain = true
 pattern = "go.solstone.app"
 custom_domain = true
 
-# Observability tail covers operational debugging. Worker logs at this tail
-# level intentionally surface only `<method> <path> <status>` per the
-# served route — no payload, no headers, no UA. The page's URL fragment is
-# never seen because RFC 3986 fragments are processed client-side.
+# Keep Workers Logs available for deliberate application errors, while disabling
+# Cloudflare's built-in per-request invocation events. The fragment guarantee is
+# separate: RFC 3986 fragments are processed client-side and never enter HTTP.
 [observability]
 enabled = true
+
+[observability.logs]
+enabled = true
+persist = true
+invocation_logs = false

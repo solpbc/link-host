@@ -47,8 +47,12 @@ A change that weakens any of them is the wrong change regardless of size:
 
 - **No payload ever reaches or is logged by the Worker.** The handoff payload
   rides in the URL *fragment*, which is client-side per RFC 3986 — the Worker
-  must never depend on, parse, store, or log it. The CF observability tail
-  carries `<method> <path> <status>` only; never add logging that captures more.
+  must never depend on, parse, store, or log it.
+- **No routine request logging.** `wrangler.toml` explicitly disables
+  Cloudflare's built-in invocation events. Workers Logs remains enabled only
+  for deliberate application error output; the Worker currently emits no
+  application logs. Keep this platform control separate from the HTTP fragment
+  guarantee above.
 - **No beaconing surface.** The HTML responses ship a strict CSP with
   `connect-src 'none'` so any future client-side script *cannot* make a network
   request. Never relax the CSP to add an analytics/telemetry/third-party script —

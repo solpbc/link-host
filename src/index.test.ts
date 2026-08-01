@@ -2,6 +2,7 @@
 // Copyright (c) 2026 sol pbc
 
 import { describe, expect, it } from "vitest";
+import WRANGLER_TOML from "../wrangler.toml?raw";
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import worker from "./index";
 
@@ -10,7 +11,45 @@ const HTML_CSP =
 
 const get = (url: string, init?: RequestInit) => worker.fetch(new Request(url, init));
 
+function tomlSectionSettings(toml: string, sectionName: string): Map<string, string> {
+	const settings = new Map<string, string>();
+	let currentSection = "";
+
+	for (const rawLine of toml.split("\n")) {
+		const line = rawLine.replace(/\s+#.*$/, "").trim();
+		if (!line) continue;
+
+		const section = line.match(/^\[([^\]]+)]$/);
+		if (section) {
+			currentSection = section[1];
+			continue;
+		}
+
+		if (currentSection !== sectionName) continue;
+		const setting = line.match(/^([A-Za-z0-9_]+)\s*=\s*(.+)$/);
+		if (setting) settings.set(setting[1], setting[2].trim());
+	}
+
+	return settings;
+}
+
+function invocationLogsAreDisabled(toml: string): boolean {
+	return tomlSectionSettings(toml, "observability.logs").get("invocation_logs") === "false";
+}
+
 describe("link-host Worker", () => {
+	it("disables persisted Cloudflare invocation logs in production config", () => {
+		expect(invocationLogsAreDisabled(WRANGLER_TOML)).toBe(true);
+	});
+
+	it("fails the config guard if invocation logging is enabled or unspecified", () => {
+		const enabled = WRANGLER_TOML.replace("invocation_logs = false", "invocation_logs = true");
+		const unspecified = WRANGLER_TOML.replace("invocation_logs = false", "");
+
+		expect(invocationLogsAreDisabled(enabled)).toBe(false);
+		expect(invocationLogsAreDisabled(unspecified)).toBe(false);
+	});
+
 	it("serves the solstone AASA only on go.solstone.app", async () => {
 		const res = await get("https://go.solstone.app/.well-known/apple-app-site-association");
 		const body = (await res.json()) as {

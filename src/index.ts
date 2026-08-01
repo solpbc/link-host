@@ -23,11 +23,11 @@
 //   - No analytics, no third-party scripts in served content.
 //   - Strict CSP on HTML responses; `connect-src 'none'` so any future
 //     client-side script cannot beacon out.
-//   - The URL fragment is processed client-side per RFC 3986 — the Worker
-//     never sees it.
-//   - Worker logs (CF tail) carry method + path + status only by what we
-//     log here (we do not log anything explicitly; CF's built-in tail
-//     line is structural and excludes the fragment by HTTP semantics).
+//   - The URL fragment is processed client-side per RFC 3986 and never enters
+//     the HTTP request, independently of platform logging configuration.
+//   - `wrangler.toml` disables Cloudflare's built-in invocation events. This
+//     source emits no application logs; Workers Logs stays available for
+//     deliberate operational error output.
 //
 // See the private product spec for this host for
 // the full design.
