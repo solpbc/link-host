@@ -108,6 +108,3 @@ here so they stand on their own:
   `.github/workflows/` deploy job.
 - **Secrets:** none today (the Worker holds no keys). If that ever changes, they
   go via `wrangler secret put`, never in the repo, never in `[vars]`, never logged.
-- **Owner-facing copy** (the landing pages) follows sol pbc brand voice —
-  lowercase-first, no surveillance verbs (watch/capture/record/monitor/track/
-  collect). Copy edits are CMO-owned per the README map; flow PR → manual deploy.
