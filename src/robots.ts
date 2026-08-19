@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 sol pbc
 
-// robots.txt. Disallow directory prefixes `/p` and `/x` (per-user
-// install-fallback paths — no value to crawlers, and `/p` URL fragments carry
-// pair payloads). Allow `/` and `/.well-known/*` (public host description and
-// platform-required AASA + assetlinks files).
+// robots.txt. This host is a machine endpoint (universal-link payloads and
+// install-fallback pages). There is no reader to serve and nothing to rank.
 
-export const ROBOTS = `User-agent: *
-Disallow: /p
-Disallow: /x
-Allow: /.well-known/
-Allow: /
+export const ROBOTS = `# Machine endpoint. There is no human reader to serve and nothing to rank.
+
+User-agent: *
+Disallow: /
 `;

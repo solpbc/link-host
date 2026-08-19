@@ -14,7 +14,7 @@
 //     GET  /x/sync                                  →  extro install-fallback
 //   both hosts:
 //     GET  /                                        →  bare host page (host-derived)
-//     GET  /robots.txt                              →  robots.txt
+//     GET  /robots.txt                              →  disallow-all
 //     *    *                                        →  404
 //     POST/PUT/DELETE/PATCH *                       →  405
 //

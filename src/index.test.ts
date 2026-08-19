@@ -150,7 +150,8 @@ describe("link-host Worker", () => {
 
 		expect(res.status).toBe(200);
 		expect(res.headers.get("Content-Type")).toContain("text/plain");
-		expect(body).toContain("Disallow: /p");
+		expect(body).toContain("Disallow: /");
+		expect(body).not.toContain("Allow: /");
 	});
 
 	it("rejects non-GET methods with Allow", async () => {
