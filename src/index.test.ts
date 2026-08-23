@@ -138,20 +138,24 @@ describe("link-host Worker", () => {
 		const linkBody = await linkRes.text();
 
 		expect(goRes.status).toBe(200);
+		expect(goRes.headers.get("X-Robots-Tag")).toBe("noindex");
 		expect(goBody).toContain("<h1>go.solstone.app</h1>");
 		expect(goBody).toContain("<title>go.solstone.app</title>");
 		expect(linkRes.status).toBe(200);
+		expect(linkRes.headers.get("X-Robots-Tag")).toBe("noindex");
 		expect(linkBody).toContain("link.solpbc.org");
 	});
 
-	it("serves shared robots.txt", async () => {
+	it("serves shared robots.txt: root crawlable, /p and /x disallowed", async () => {
 		const res = await get("https://go.solstone.app/robots.txt");
 		const body = await res.text();
 
 		expect(res.status).toBe(200);
 		expect(res.headers.get("Content-Type")).toContain("text/plain");
-		expect(body).toContain("Disallow: /");
-		expect(body).not.toContain("Allow: /");
+		expect(body).toContain("Disallow: /p");
+		expect(body).toContain("Disallow: /x");
+		expect(body).toContain("Allow: /");
+		expect(body).not.toMatch(/^Disallow: \/$/m);
 	});
 
 	it("rejects non-GET methods with Allow", async () => {

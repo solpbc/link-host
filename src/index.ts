@@ -13,8 +13,8 @@
 //     GET  /.well-known/apple-app-site-association  →  extro AASA
 //     GET  /x/sync                                  →  extro install-fallback
 //   both hosts:
-//     GET  /                                        →  bare host page (host-derived)
-//     GET  /robots.txt                              →  disallow-all
+//     GET  /                                        →  bare host page (host-derived), noindex
+//     GET  /robots.txt                              →  disallow /p, /x; allow / and /.well-known/
 //     *    *                                        →  404
 //     POST/PUT/DELETE/PATCH *                       →  405
 //
@@ -69,7 +69,7 @@ const COMMON_SECURITY_HEADERS: HeadersInit = {
 	"Permissions-Policy": "interest-cohort=(), browsing-topics=()",
 };
 
-function htmlResponse(body: string, status = 200): Response {
+function htmlResponse(body: string, status = 200, extraHeaders: HeadersInit = {}): Response {
 	return new Response(body, {
 		status,
 		headers: {
@@ -77,6 +77,7 @@ function htmlResponse(body: string, status = 200): Response {
 			"Content-Security-Policy": HTML_CSP,
 			"Cache-Control": "public, max-age=300",
 			...COMMON_SECURITY_HEADERS,
+			...extraHeaders,
 		},
 	});
 }
@@ -176,8 +177,13 @@ export default {
 			return htmlResponse(renderExtroSync());
 		}
 
+		// Crawlable so a Disallow can never lock in a stale index entry, but
+		// tagged noindex — this host has nothing worth ranking, per the CMO
+		// indexability policy's tier-4 assignment for these hosts.
 		if (url.pathname === "/") {
-			return htmlResponse(renderIndex(host));
+			return htmlResponse(renderIndex(host), 200, {
+				"X-Robots-Tag": "noindex",
+			});
 		}
 
 		if (url.pathname === "/robots.txt") {

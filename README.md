@@ -88,7 +88,7 @@ External API calls from the Worker: none.
 | `GET /.well-known/apple-app-site-association` | solstone AASA JSON, `application/json`, `Cache-Control: public, max-age=3600`, no redirects |
 | `GET /.well-known/assetlinks.json` | solstone assetlinks JSON, same caching posture |
 | `GET /p` | solstone landing page (HTML, strict CSP) |
-| `GET /` | bare host page (HTML, strict CSP, host-derived title/H1) |
+| `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
 | `GET /robots.txt` | disallow `/p` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /x/sync` | `404` |
 
@@ -98,7 +98,7 @@ External API calls from the Worker: none.
 |---|---|
 | `GET /.well-known/apple-app-site-association` | extro AASA JSON, `application/json`, `Cache-Control: public, max-age=3600`, no redirects |
 | `GET /x/sync` | extro landing page (HTML, strict CSP) |
-| `GET /` | bare host page (HTML, strict CSP, host-derived title/H1) |
+| `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
 | `GET /robots.txt` | disallow `/p` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /p` | `404` |
 | `GET /.well-known/assetlinks.json` | `404` |
