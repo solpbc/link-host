@@ -21,8 +21,8 @@
 // Privacy invariants enforced by this Worker:
 //   - No cookies set, anywhere.
 //   - No analytics, no third-party scripts in served content.
-//   - Strict CSP on HTML responses; `connect-src 'none'` so any future
-//     client-side script cannot beacon out.
+//   - Strict CSP on HTML responses; `connect-src 'none'` blocks scripted
+//     connection APIs. The current pages ship no JavaScript.
 //   - The URL fragment is processed client-side per RFC 3986 and never enters
 //     the HTTP request, independently of platform logging configuration.
 //   - `wrangler.toml` disables Cloudflare's built-in invocation events. This
@@ -48,7 +48,7 @@ function hostKind(hostname: string): HostKind {
 }
 
 // CSP for HTML responses. Locked per spec:
-// - `connect-src 'none'` — makes accidental beaconing impossible.
+// - `connect-src 'none'` — blocks scripted connection APIs.
 // - `style-src 'self' 'unsafe-inline'` — we inline our CSS so the page
 //   renders without a separate request; the inline content is verifiable
 //   in the public repo. No third-party stylesheets.

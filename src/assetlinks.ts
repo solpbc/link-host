@@ -15,11 +15,9 @@
 //
 // `sha256_cert_fingerprints` carries the certificate that signs the current
 // release distributed outside Play — that is what those installs verify
-// against. Play App Signing is mandatory at the first Play upload and may
-// issue a *different* app-signing certificate. If it does, **add** that
-// fingerprint to this array (Digital Asset Links accepts several) before
-// Play-distributed installs are expected to verify. Do not replace the value
-// below to make room for it — off-Play installs still verify against it.
+// against. Play App Signing uses a different certificate for Play-distributed
+// installs, so both certificates belong in this array. Off-Play installs
+// still verify against the upload-key certificate.
 
 export const ASSETLINKS = [
 	{
@@ -29,6 +27,7 @@ export const ASSETLINKS = [
 			package_name: "app.solstone.observer.phone",
 			sha256_cert_fingerprints: [
 				"12:DF:E3:2F:91:F7:18:25:90:09:27:37:91:7E:D7:19:33:7F:8F:9B:11:63:24:5B:3B:DC:34:79:A6:BE:26:60",
+				"81:60:00:6B:5A:E1:41:87:03:B3:08:7E:08:6D:4C:D8:0D:64:C7:95:B0:72:C1:4C:81:C5:71:FC:3F:C2:34:A6",
 			],
 		},
 	},

@@ -11,7 +11,7 @@ native apps, dispatched by request host:
   `/x/sync` install-fallback. No solstone, no assetlinks, no webcredentials.
 
 The solstone pair-flow QR host is now `https://go.solstone.app/p#…`. It moved
-off `link.solpbc.org` as a hard cutover before users existed.
+off `link.solpbc.org` before launch.
 
 > link-host adds no analytics, cookies, third-party scripts, or application
 > request logs. Its production config disables Cloudflare's persisted built-in
@@ -29,9 +29,9 @@ Worker serves two app-association handoff hosts from one codebase:
 
 Today `go.solstone.app` is consumed by
 [sol private link (spl)](https://github.com/solpbc/spl) pair-flow QR codes:
-scanning a `https://go.solstone.app/p#…` QR either opens the solstone mobile app
-(if installed) or takes the user to the App Store / Play Store with the payload
-preserved through the platform deferred-deep-link mechanism.
+scanning a `https://go.solstone.app/p#…` QR can open the solstone mobile app
+when it is installed. Otherwise the fallback page links to the App Store or
+Play Store. After installing, the owner can open a valid pairing link.
 
 Future sol pbc apps add their own paths to the relevant host via a small PR.
 
@@ -52,13 +52,13 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
   `link.solpbc.org/x/sync`; anything that enrolls, issues a token, or carries
   tunnel bytes → `link.solstone.app`. Never cross handoff with relay.
 - **Status:** solstone AASA carries the confirmed iOS value
-  (`7QCG8V4M6H.app.solstone.swift` — sol pbc paid Apple Developer team crossed
-  with the minted bundle). extro AASA carries `7QCG8V4M6H.org.solpbc.extro`.
+  (`7QCG8V4M6H.app.solstone.swift`, the paid Apple Developer team and app bundle).
+  extro AASA carries `7QCG8V4M6H.org.solpbc.extro`.
   assetlinks on `go.solstone.app` claims the shipped Android phone package
-  (`app.solstone.observer.phone`) and the certificate that signs the current
-  release distributed outside Play; the watch, glasses, and validation packages
-  are deliberately unclaimed. File shape + headers + landing pages validate
-  cleanly today; the iOS Universal Link handoff is wireable now.
+  (`app.solstone.observer.phone`) with both the direct-release signing certificate
+  and the Play App Signing certificate. The watch, glasses, and validation
+  packages are deliberately unclaimed. File shape + headers + landing pages
+  validate cleanly today; the iOS Universal Link handoff is wireable now.
 
 ## privacy properties
 
@@ -68,14 +68,13 @@ These are structural, not policy:
    client-side, so the pairing payload is absent from the request independently
    of any logging configuration.
 2. **The pages collect nothing.** No cookies. No analytics. No third-party
-   scripts. Strict CSP `connect-src 'none'` makes accidental beaconing
-   impossible — the JS literally cannot make a network request.
+   scripts. The pages ship no JavaScript; CSP blocks scripted connection APIs.
 3. **Persisted invocation events are disabled.** Cloudflare's built-in
    per-request invocation logs are explicitly off in `wrangler.toml`. Workers
    Logs remains enabled for deliberate application error output; this source
    currently emits no application logs.
-4. **Open source.** This repo is public from first commit. Verify the
-   deployed Worker against this source by checksumming the script.
+4. **Open source.** This repo is public from first commit. Readers can inspect
+   the source and compare its expected responses with the live host.
 
 External API calls from the Worker: none.
 
@@ -116,7 +115,7 @@ src/
   index.ts            CF Worker — host-aware routes, headers, CSP
   index.test.ts       Worker route tests
   aasa.ts             two host-specific AASA payloads, solstone + extro
-  assetlinks.ts       solstone assetlinks JSON (phone package + release cert)
+  assetlinks.ts       solstone assetlinks JSON (phone package + direct and Play certs)
   landing.ts          /p HTML — UA-aware solstone install-fallback page
   landing-extro.ts    /x/sync HTML — extro install-fallback page
   index-page.ts       / HTML — bare host page
@@ -149,10 +148,10 @@ make ci
 ## deploy
 
 Manual `wrangler deploy` from an authenticated operator workstation. There is
-no GH Actions deploy job, by design — matches the
+no GH Actions deploy job, by design. This matches the
 [spl-relay](https://github.com/solpbc/spl) precedent. Source of truth: this
-repo's `main` branch. Anyone can verify the deployed Worker by checksumming it
-against the published source.
+repo's `main` branch. Readers can inspect the source and compare its expected
+responses with the live host.
 
 ```sh
 # one-time: log in to the sol pbc CF account
@@ -170,7 +169,7 @@ certs are auto-provisioned by Cloudflare.
 
 | who | file | what they edit |
 |---|---|---|
-| CSO | `src/assetlinks.ts` | the Android package claim + `sha256_cert_fingerprints` — including adding the Play App Signing certificate alongside the existing one if Play issues a distinct one at first upload |
+| CSO | `src/assetlinks.ts` | the Android package claim and the direct-release and Play App Signing certificate fingerprints |
 | CMO | `src/landing.ts` | solstone landing page copy slots (H1, sub, CTAs, footer); App Store / Play Store URLs once each listing is live |
 | CMO | `src/landing-extro.ts` | extro fallback copy |
 | CMO | `src/index-page.ts` | bare host page copy |
@@ -195,14 +194,14 @@ the relevant host's AASA payload:
 
 After deploy, check:
 
-1. **Solstone AASA shape:** [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) — paste `https://go.solstone.app` and confirm the file parses. Bundle-ID lookup will fail until Apple Developer Program enrollment ships; file shape + headers should pass.
+1. **Solstone AASA shape:** paste `https://go.solstone.app` into the [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) and confirm the file parses. Verify the actual handoff on an iPhone with the app installed.
 2. **Extro AASA shape:** paste `https://link.solpbc.org` and confirm only the extro claim parses.
-3. **assetlinks shape:** [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) — validate `https://go.solstone.app`. The phone package and certificate are both real, so this should verify rather than just parse. Verification on a real device additionally requires the installed app to declare the matching `autoVerify` App Link intent filter.
+3. **assetlinks shape:** validate `https://go.solstone.app` with [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator). Then install an APK signed by the certificate being checked and inspect Android's App Links state. The installed app must also declare the matching `autoVerify` intent filter.
 4. **CSP:** open `https://go.solstone.app/p` and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself).
 
 ## see also
 
-- [sol private link (spl)](https://github.com/solpbc/spl) — the first consumer
+- [sol private link (spl)](https://github.com/solpbc/spl), the first consumer
   of `go.solstone.app`, the pair-flow QR codes for solstone mobile.
-- [sol pbc](https://solpbc.org) — public benefit corporation operating these
+- [sol pbc](https://solpbc.org), public benefit corporation operating these
   systems.

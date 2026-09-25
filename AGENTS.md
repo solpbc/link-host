@@ -1,12 +1,12 @@
-# link-host — agent guide
+# link-host agent guide
 
 `link-host` is a single Cloudflare Worker serving sol pbc's universal native-app
 handoff surfaces, dispatched by request host: `go.solstone.app` (solstone
 universal-link surface) and `link.solpbc.org` (extro sync surface). It holds no
-keys, sees no payload, runs no relay — it serves AASA / `assetlinks.json` /
+keys, sees no payload, and runs no relay. It serves AASA / `assetlinks.json` /
 install-fallback HTML and nothing else.
 
-**Read [`README.md`](README.md) first** — it is the authoritative spec for the
+**Read [`README.md`](README.md) first.** It is the authoritative spec for the
 route table, the privacy properties, the host-split, the content-edit ownership
 map (who edits which `src/*.ts`), the "never cross handoff with relay" rule, and
 the deploy/verify steps. This file does not restate that; it covers how to work
@@ -16,12 +16,12 @@ in the repo correctly. `CLAUDE.md` and `GEMINI.md` are symlinks to this file.
 
 - One Worker, two custom-domain routes (`wrangler.toml`), host-dispatched by
   `hostKind()` in `src/index.ts`. Solstone claims live on `go.solstone.app`;
-  extro claims on `link.solpbc.org`. They do **not** bleed across hosts — a
+  extro claims on `link.solpbc.org`. They do **not** bleed across hosts. A
   solstone path on the extro host is a `404`, and vice-versa. Keep that split
   hard when adding anything.
 - All served content (AASA payloads, assetlinks, HTML pages, robots.txt) is a
   TypeScript string module in `src/`, inlined by the router. **There is no
-  `static/` directory** and no build step for content — edit the `.ts` module.
+  `static/` directory** and no build step for content. Edit the `.ts` module.
 - The whole surface is `GET`-only HTML/JSON. Non-GET verbs return `405`;
   unknown paths return `404`. There is no API, no database, no auth, no state.
 
@@ -40,26 +40,25 @@ make ci          # typecheck + lint + test — the gate; green before commit
 make deploy      # wrangler deploy (operator-run; see README)
 ```
 
-## Invariants that must not regress — these *are* the product
+## Invariants that must not regress
 
 The privacy properties in the README are structural guarantees, not nice-to-haves.
 A change that weakens any of them is the wrong change regardless of size:
 
 - **No payload ever reaches or is logged by the Worker.** The handoff payload
-  rides in the URL *fragment*, which is client-side per RFC 3986 — the Worker
+  rides in the URL *fragment*, which is client-side per RFC 3986. The Worker
   must never depend on, parse, store, or log it.
 - **No routine request logging.** `wrangler.toml` explicitly disables
   Cloudflare's built-in invocation events. Workers Logs remains enabled only
   for deliberate application error output; the Worker currently emits no
   application logs. Keep this platform control separate from the HTTP fragment
   guarantee above.
-- **No beaconing surface.** The HTML responses ship a strict CSP with
-  `connect-src 'none'` so any future client-side script *cannot* make a network
-  request. Never relax the CSP to add an analytics/telemetry/third-party script —
-  there are none, by covenant ([sol pbc data covenants](https://solpbc.org)), and
-  adding one is a fail-stop change. No cookies, anywhere.
+- **No beaconing surface.** The pages ship no JavaScript. Their CSP blocks
+  scripted connection APIs with `connect-src 'none'`. Never add analytics,
+  telemetry, or a third-party script; the [sol pbc data covenants](https://solpbc.org)
+  forbid them. No cookies, anywhere.
 - **No external calls.** The Worker makes zero outbound fetches. If you reach for
-  one, stop — there's a wrong turn upstream.
+  one, stop. That work belongs upstream.
 - **No keys, no relay.** This Worker never holds a key or carries tunnel bytes.
   Anything that enrolls, issues a token, or moves payload bytes belongs in the
   separate `spl` repo (`link.solstone.app`), not here. See README "Not the relay."
@@ -78,18 +77,17 @@ here so they stand on their own:
   invent fallbacks for inputs the router already constrains.
 - **Reference, don't duplicate.** The README owns the route/privacy/content spec;
   this file owns coding guidance. Don't copy the route table into a third place
-  that has to be kept in sync. The full design lives in the private product
-  spec for this host (internal; reference only).
-- **Open source is the product.** This repo is public from first commit; the
-  trust claim is "checksum the deployed Worker against this source." Keep every
-  visible file clean of private operational context, internal paths, and machine
-  names.
+  that has to be kept in sync.
+- **Open source is the product.** This repo is public from first commit. Readers
+  can inspect the source and compare its expected responses with the live host.
+  Keep every visible file clean of private operational context, internal paths,
+  and machine names.
 - **Test the contract, not a snapshot.** `src/index.test.ts` asserts route
   responses, headers, caching posture, and the CSP. When you change a served
-  payload or header, update the assertion to the new contract — don't pin a test
+  payload or header, update the assertion to the new contract. Don't pin a test
   to copy that's designed to change (landing-page wording, store URLs).
-- **Vendor everything client-side.** No third-party CDNs/fonts/scripts in served
-  HTML — the CSP forbids it anyway. CSS is inlined and verifiable in-repo.
+- **Vendor everything client-side.** No third-party CDNs, fonts, or scripts in served
+  HTML. The CSP also blocks them. CSS is inlined and verifiable in-repo.
 
 ## Conventions
 
@@ -102,7 +100,7 @@ here so they stand on their own:
   Don't add headers to docs, config, or generated files.
 - **Build interface is `make`** (wrapping npm); **runtime is Cloudflare Workers**
   via `wrangler`. TypeScript strict; Biome for lint/format.
-- **No GitHub Actions / no CI deploy — by design.** Every deploy is `wrangler
+- **No GitHub Actions or CI deploy by design.** Every deploy is `wrangler
   deploy` run by an authenticated operator from a local machine (matches the
   `spl-relay` precedent). Credentials never live in GitHub. Don't add a
   `.github/workflows/` deploy job.
