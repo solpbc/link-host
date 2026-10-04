@@ -18,7 +18,7 @@
 // the authoritative copy lives in the private product spec for this host,
 // §literal copy. Brand iterates via PR + manual deploy.
 
-const H1 = "finish pairing your phone with solstone.";
+const H1 = "finish pairing your phone with your journal.";
 const SUB =
 	"you scanned a pair code, but solstone mobile isn't installed yet. install it to finish.";
 const CTA_IOS = "get solstone for iPhone";
