@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 sol pbc
 
-// `/p` — install-fallback landing page. Rendered only when iOS / Android
-// did NOT recognize the URL as belonging to an installed sol pbc app and
-// hands the URL to the browser instead. Strict CSP. No analytics, no
-// cookies, no third-party scripts.
+// `/p` — the pairing link's landing page. A phone lands here only when iOS /
+// Android did NOT recognize the URL as belonging to an installed sol pbc app
+// and handed it to the browser instead. A desktop always lands here: it has
+// no universal link, so the page says how to hand the link to the solstone
+// app on that computer. Strict CSP. No analytics, no cookies, no
+// third-party scripts.
 //
 // UA detection is server-side via the request's `User-Agent` header. That
 // header is in every HTTP request to any origin; we just use it once to
@@ -24,6 +26,21 @@ const SUB =
 const CTA_IOS = "get solstone for iPhone";
 const CTA_ANDROID = "get solstone for Android";
 const FOOTER = "sol pbc · open source · this page collects nothing.";
+
+// A desktop has no app to hand the link to automatically, so the page asks
+// for a paste. The link is this page's own address: the pairing secret sits
+// in the fragment, which the browser keeps and never sends to this server.
+const DESKTOP_H1 = "pair this computer with your journal.";
+const DESKTOP_SUB =
+	"this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.";
+const DESKTOP_LINUX = "on linux, save it as pairing-link.txt and run:";
+const DESKTOP_LINUX_COMMAND = "solstone-linux setup < pairing-link.txt";
+const DESKTOP_EXPIRY =
+	"this link works once, and only for a few minutes after your journal shows it.";
+const DESKTOP_GET_APP = "don't have the solstone app on this computer yet?";
+const DESKTOP_GET_APP_LINK = "solstone.app/install";
+const DESKTOP_PHONE = "pairing a phone instead?";
+const INSTALL_URL = "https://solstone.app/install";
 
 // Store URLs. Bundle / package names are confirmed (`app.solstone.swift`
 // for iOS; `app.solstone.observer.phone` for Android — the shipped phone
@@ -54,6 +71,7 @@ function detectPlatform(userAgent: string): Platform {
 
 export function renderLanding(userAgent: string): string {
 	const platform = detectPlatform(userAgent);
+	if (platform === "other") return renderDesktop();
 	const iosFirst = platform !== "android";
 	const iosButton = `<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>`;
 	const androidButton = `<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>`;
@@ -61,12 +79,42 @@ export function renderLanding(userAgent: string): string {
 		? `${iosButton}\n\t\t\t${androidButton}`
 		: `${androidButton}\n\t\t\t${iosButton}`;
 
+	return page(
+		"finish pairing",
+		`<h1>${H1}</h1>
+		<p class="sub">${SUB}</p>
+		<div class="ctas">
+			${buttons}
+		</div>`,
+	);
+}
+
+// The store buttons stay on the desktop page, second: an iPad's Safari
+// reports a desktop user agent, and an iPad without the app lands here.
+function renderDesktop(): string {
+	return page(
+		"pair a device",
+		`<h1>${DESKTOP_H1}</h1>
+		<p class="sub">${DESKTOP_SUB}</p>
+		<p class="note">${DESKTOP_LINUX}</p>
+		<pre class="command">${DESKTOP_LINUX_COMMAND.replace("<", "&lt;")}</pre>
+		<p class="note">${DESKTOP_EXPIRY}</p>
+		<p class="note">${DESKTOP_GET_APP} <a href="${INSTALL_URL}">${DESKTOP_GET_APP_LINK}</a></p>
+		<p class="note phone">${DESKTOP_PHONE}</p>
+		<div class="ctas secondary">
+			<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>
+			<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>
+		</div>`,
+	);
+}
+
+function page(title: string, body: string): string {
 	return `<!doctype html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>finish pairing — go.solstone.app</title>
+	<title>${title} · go.solstone.app</title>
 	<meta name="robots" content="noindex, nofollow">
 	<style>
 		:root {
@@ -149,15 +197,33 @@ export function renderLanding(userAgent: string): string {
 			font-size: 0.8125rem;
 		}
 		footer a { color: var(--muted); }
+		p.note {
+			color: var(--muted);
+			margin: 0 0 0.75rem;
+			font-size: 0.9375rem;
+		}
+		p.note a { color: var(--fg); }
+		p.phone { margin-top: 2rem; }
+		pre.command {
+			margin: 0 0 1rem;
+			padding: 0.625rem 0.75rem;
+			border: 1px solid var(--muted);
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			text-align: left;
+			white-space: pre-wrap;
+			word-break: break-all;
+		}
+		.ctas.secondary .cta:first-child {
+			background: var(--cta-alt-bg);
+			color: var(--cta-alt-fg);
+			border: 1px solid var(--cta-alt-border);
+		}
 	</style>
 </head>
 <body>
 	<main>
-		<h1>${H1}</h1>
-		<p class="sub">${SUB}</p>
-		<div class="ctas">
-			${buttons}
-		</div>
+		${body}
 		<footer>${FOOTER}</footer>
 	</main>
 </body>

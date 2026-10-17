@@ -92,6 +92,26 @@ describe("link-host Worker", () => {
 		expect(res.headers.get("Content-Security-Policy")).toBe(HTML_CSP);
 	});
 
+	it("tells a desktop to paste the link and keeps the phone stores second", async () => {
+		const desktop = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/141.0" },
+			})
+		).text();
+		expect(desktop).toContain("pair this computer with your journal.");
+		expect(desktop).toContain("solstone-linux setup &lt; pairing-link.txt");
+		expect(desktop.indexOf("solstone app on this computer")).toBeLessThan(
+			desktop.indexOf("get solstone for iPhone"),
+		);
+		const phone = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X)" },
+			})
+		).text();
+		expect(phone).toContain("finish pairing your phone with your journal.");
+		expect(phone).not.toContain("pair this computer");
+	});
+
 	it("serves solstone assetlinks only on go.solstone.app", async () => {
 		const res = await get("https://go.solstone.app/.well-known/assetlinks.json");
 		const body = (await res.json()) as {
