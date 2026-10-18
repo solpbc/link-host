@@ -112,6 +112,41 @@ describe("link-host Worker", () => {
 		expect(phone).not.toContain("pair this computer");
 	});
 
+	it("gives the desktop page a hidden open-in-app button and its same-origin script", async () => {
+		const desktop = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) Safari/605.1.15" },
+			})
+		).text();
+		expect(desktop).toContain('<div id="open-app-block" hidden>');
+		expect(desktop).toContain('id="open-app"');
+		expect(desktop).toContain('<script src="/p.js" defer></script>');
+		expect(desktop.indexOf('id="open-app"')).toBeLessThan(desktop.indexOf("solstone-linux setup"));
+		const phone = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (Linux; Android 15) Chrome/141.0 Mobile" },
+			})
+		).text();
+		expect(phone).not.toContain("/p.js");
+
+		const script = await get("https://go.solstone.app/p.js");
+		expect(script.status).toBe(200);
+		expect(script.headers.get("Content-Type")).toBe("text/javascript; charset=utf-8");
+		const body = await script.text();
+		expect(body).toContain('"solstone://pair" + location.hash');
+		expect(body).not.toMatch(/fetch|XMLHttpRequest|sendBeacon/);
+		expect((await get("https://link.solpbc.org/p.js")).status).toBe(404);
+
+		const linux = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Firefox/140.0" },
+			})
+		).text();
+		expect(linux).toContain("solstone-linux setup &lt; pairing-link.txt");
+		expect(linux).not.toContain('id="open-app"');
+		expect(linux).not.toContain("/p.js");
+	});
+
 	it("serves solstone assetlinks only on go.solstone.app", async () => {
 		const res = await get("https://go.solstone.app/.well-known/assetlinks.json");
 		const body = (await res.json()) as {

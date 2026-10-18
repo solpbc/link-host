@@ -33,6 +33,8 @@ const FOOTER = "sol pbc · open source · this page collects nothing.";
 const DESKTOP_H1 = "pair this computer with your journal.";
 const DESKTOP_SUB =
 	"this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.";
+const DESKTOP_OPEN_APP = "open in the solstone app";
+const DESKTOP_OPEN_APP_OR = "or paste it in yourself:";
 const DESKTOP_LINUX = "on linux, save it as pairing-link.txt and run:";
 const DESKTOP_LINUX_COMMAND = "solstone-linux setup < pairing-link.txt";
 const DESKTOP_EXPIRY =
@@ -49,7 +51,7 @@ const IOS_STORE_URL = "https://apps.apple.com/app/id6776850664";
 const ANDROID_STORE_URL =
 	"https://play.google.com/store/apps/details?id=app.solstone.observer.phone";
 
-type Platform = "ios" | "android" | "other";
+type Platform = "ios" | "android" | "linux" | "other";
 
 function detectPlatform(userAgent: string): Platform {
 	const ua = userAgent.toLowerCase();
@@ -59,12 +61,15 @@ function detectPlatform(userAgent: string): Platform {
 	// destination (both buttons are always shown).
 	if (/iphone|ipad|ipod/.test(ua)) return "ios";
 	if (/android/.test(ua)) return "android";
+	// The solstone app on linux has no link handler, so a linux or ChromeOS
+	// browser gets the desktop page without the open-in-app button.
+	if (/linux|cros/.test(ua)) return "linux";
 	return "other";
 }
 
 export function renderLanding(userAgent: string): string {
 	const platform = detectPlatform(userAgent);
-	if (platform === "other") return renderDesktop();
+	if (platform === "other" || platform === "linux") return renderDesktop(platform === "other");
 	const iosFirst = platform !== "android";
 	const iosButton = `<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>`;
 	const androidButton = `<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>`;
@@ -84,11 +89,20 @@ export function renderLanding(userAgent: string): string {
 
 // The store buttons stay on the desktop page, second: an iPad's Safari
 // reports a desktop user agent, and an iPad without the app lands here.
-function renderDesktop(): string {
+function renderDesktop(offerOpenApp: boolean): string {
+	// Mac and windows get the open-in-app button; the script reveals it only
+	// when the page carries a pairing fragment.
+	const openApp = offerOpenApp
+		? `<div id="open-app-block" hidden>
+			<div class="ctas"><a class="cta" id="open-app" href="#">${DESKTOP_OPEN_APP}</a></div>
+			<p class="note">${DESKTOP_OPEN_APP_OR}</p>
+		</div>
+		`
+		: "";
 	return page(
 		"pair a device",
 		`<h1>${DESKTOP_H1}</h1>
-		<p class="sub">${DESKTOP_SUB}</p>
+		${openApp}<p class="sub">${DESKTOP_SUB}</p>
 		<p class="note">${DESKTOP_LINUX}</p>
 		<pre class="command">${DESKTOP_LINUX_COMMAND.replace("<", "&lt;")}</pre>
 		<p class="note">${DESKTOP_EXPIRY}</p>
@@ -97,9 +111,22 @@ function renderDesktop(): string {
 		<div class="ctas secondary">
 			<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>
 			<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>
-		</div>`,
+		</div>${offerOpenApp ? '\n\t\t<script src="/p.js" defer></script>' : ""}`,
 	);
 }
+
+// The desktop page's only script, served from this origin. It points the
+// "open in the solstone app" button at the solstone: link carrying the same
+// fragment. The fragment, which holds the pairing secret, stays in the
+// browser and never reaches this server. Without it the page is unchanged.
+export const DESKTOP_SCRIPT = `(function () {
+	var block = document.getElementById("open-app-block");
+	var link = document.getElementById("open-app");
+	if (!block || !link || location.hash.length < 2) return;
+	link.setAttribute("href", "solstone://pair" + location.hash);
+	block.hidden = false;
+})();
+`;
 
 function page(title: string, body: string): string {
 	return `<!doctype html>
@@ -135,6 +162,8 @@ function page(title: string, body: string): string {
 			}
 		}
 		* { box-sizing: border-box; }
+		[hidden] { display: none !important; }
+		#open-app-block .note { margin-top: 0.75rem; }
 		html, body { margin: 0; padding: 0; }
 		body {
 			background: var(--bg);

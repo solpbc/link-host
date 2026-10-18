@@ -9,6 +9,7 @@
 //     GET  /.well-known/apple-app-site-association  →  solstone AASA
 //     GET  /.well-known/assetlinks.json             →  solstone assetlinks
 //     GET  /p                                       →  solstone install-fallback
+//     GET  /p.js                                    →  the desktop page's open-in-app script
 //   link.solpbc.org (extro surface):
 //     GET  /.well-known/apple-app-site-association  →  extro AASA
 //     GET  /x/sync                                  →  extro install-fallback
@@ -22,7 +23,8 @@
 //   - No cookies set, anywhere.
 //   - No analytics, no third-party scripts in served content.
 //   - Strict CSP on HTML responses; `connect-src 'none'` blocks scripted
-//     connection APIs. The current pages ship no JavaScript.
+//     connection APIs. The only JavaScript is the desktop page's same-origin
+//     open-in-app script, which reads the fragment and makes no requests.
 //   - The URL fragment is processed client-side per RFC 3986 and never enters
 //     the HTTP request, independently of platform logging configuration.
 //   - `wrangler.toml` disables Cloudflare's built-in invocation events. This
@@ -35,7 +37,7 @@
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
 import { renderIndex } from "./index-page";
-import { renderLanding } from "./landing";
+import { DESKTOP_SCRIPT, renderLanding } from "./landing";
 import { renderExtroSync } from "./landing-extro";
 import { ROBOTS } from "./robots";
 
@@ -168,6 +170,19 @@ export default {
 			if (kind !== "solstone") return notFound();
 			const ua = request.headers.get("User-Agent") ?? "";
 			return htmlResponse(renderLanding(ua));
+		}
+
+		// The desktop landing page's one script (see `DESKTOP_SCRIPT`).
+		if (url.pathname === "/p.js") {
+			if (kind !== "solstone") return notFound();
+			return new Response(DESKTOP_SCRIPT, {
+				status: 200,
+				headers: {
+					"Content-Type": "text/javascript; charset=utf-8",
+					"Cache-Control": "public, max-age=300",
+					...COMMON_SECURITY_HEADERS,
+				},
+			});
 		}
 
 		// Extro install-fallback page. Only reached when iOS did NOT match
