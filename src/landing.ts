@@ -22,9 +22,9 @@
 
 const H1 = "finish pairing your phone with your journal.";
 const SUB =
-	"you scanned a pair code, but solstone mobile isn't installed yet. install it to finish.";
-const CTA_IOS = "get solstone for iPhone";
-const CTA_ANDROID = "get solstone for Android";
+	"you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.";
+const CTA_IOS = "get solstone for iphone";
+const CTA_ANDROID = "get solstone for android";
 const FOOTER = "sol pbc · open source · this page collects nothing.";
 
 // A desktop has no app to hand the link to automatically, so the page asks
@@ -42,17 +42,10 @@ const DESKTOP_GET_APP_LINK = "solstone.app/install";
 const DESKTOP_PHONE = "pairing a phone instead?";
 const INSTALL_URL = "https://solstone.app/install";
 
-// Store URLs. Bundle / package names are confirmed (`app.solstone.swift`
-// for iOS; `app.solstone.observer.phone` for Android — the shipped phone
-// app's application ID, per an internal product decision, superseding
-// the never-shipped `app.solstone.android` value), but the listings
-// themselves don't exist yet — App Store listing follows the first iOS
-// submission, Play Store listing follows Google Play developer enrollment
-// (completed 2026-06-05/06) + first Android build submitted to Play. The
-// Play Store URL uses the confirmed package name and will resolve once the
-// listing publishes; the iOS URL stays on the search-style `/app/solstone`
-// slug until the App Store numeric id is minted on first submission.
-const IOS_STORE_URL = "https://apps.apple.com/app/solstone";
+// Store URLs, the same listings solstone.app/phone links. The App Store
+// lists the app as "solstone mobile" under its numeric id; the Play Store
+// URL uses the phone app's application ID.
+const IOS_STORE_URL = "https://apps.apple.com/app/id6776850664";
 const ANDROID_STORE_URL =
 	"https://play.google.com/store/apps/details?id=app.solstone.observer.phone";
 

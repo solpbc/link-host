@@ -101,7 +101,7 @@ describe("link-host Worker", () => {
 		expect(desktop).toContain("pair this computer with your journal.");
 		expect(desktop).toContain("solstone-linux setup &lt; pairing-link.txt");
 		expect(desktop.indexOf("solstone app on this computer")).toBeLessThan(
-			desktop.indexOf("get solstone for iPhone"),
+			desktop.indexOf("get solstone for iphone"),
 		);
 		const phone = await (
 			await get("https://go.solstone.app/p", {
