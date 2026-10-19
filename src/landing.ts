@@ -35,8 +35,9 @@ const DESKTOP_SUB =
 	"this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.";
 const DESKTOP_OPEN_APP = "open in the solstone app";
 const DESKTOP_OPEN_APP_OR = "or paste it in yourself:";
-const DESKTOP_LINUX = "on linux, save it as pairing-link.txt and run:";
-const DESKTOP_LINUX_COMMAND = "solstone-linux setup < pairing-link.txt";
+const DESKTOP_LINUX = "on linux, you can also save it as pairing-link.txt and run:";
+const DESKTOP_LINUX_COMMAND =
+	"systemctl --user stop solstone-linux\nsolstone-linux setup < pairing-link.txt\nsystemctl --user start solstone-linux";
 const DESKTOP_EXPIRY =
 	"this link works once, and only for a few minutes after your journal shows it.";
 const DESKTOP_GET_APP = "don't have the solstone app on this computer yet?";
