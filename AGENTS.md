@@ -53,8 +53,10 @@ A change that weakens any of them is the wrong change regardless of size:
   for deliberate application error output; the Worker currently emits no
   application logs. Keep this platform control separate from the HTTP fragment
   guarantee above.
-- **No beaconing surface.** The pages ship no JavaScript. Their CSP blocks
-  scripted connection APIs with `connect-src 'none'`. Never add analytics,
+- **No beaconing surface.** The only JavaScript is the desktop pairing page's
+  same-origin script, which copies the fragment into the button's `solstone:`
+  link and makes no requests. The pages' CSP blocks scripted connection APIs
+  with `connect-src 'none'`. Never add analytics,
   telemetry, or a third-party script; the [sol pbc data covenants](https://solpbc.org)
   forbid them. No cookies, anywhere.
 - **No external calls.** The Worker makes zero outbound fetches. If you reach for

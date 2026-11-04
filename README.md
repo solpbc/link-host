@@ -68,7 +68,9 @@ These are structural, not policy:
    client-side, so the pairing payload is absent from the request independently
    of any logging configuration.
 2. **The pages collect nothing.** No cookies. No analytics. No third-party
-   scripts. The pages ship no JavaScript; CSP blocks scripted connection APIs.
+   scripts. The one script is the desktop pairing page's, served from this
+   origin. It copies the fragment into the button's `solstone:` link and makes
+   no requests, and CSP blocks scripted connection APIs.
 3. **Persisted invocation events are disabled.** Cloudflare's built-in
    per-request invocation logs are explicitly off in `wrangler.toml`. Workers
    Logs remains enabled for deliberate application error output; this source
@@ -87,6 +89,7 @@ External API calls from the Worker: none.
 | `GET /.well-known/apple-app-site-association` | solstone AASA JSON, `application/json`, `Cache-Control: public, max-age=3600`, no redirects |
 | `GET /.well-known/assetlinks.json` | solstone assetlinks JSON, same caching posture |
 | `GET /p` | solstone landing page (HTML, strict CSP) |
+| `GET /p.js` | the desktop pairing page's one script (`text/javascript`, `Cache-Control: public, max-age=300`) |
 | `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
 | `GET /robots.txt` | disallow `/p` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /x/sync` | `404` |
@@ -116,7 +119,7 @@ src/
   index.test.ts       Worker route tests
   aasa.ts             two host-specific AASA payloads, solstone + extro
   assetlinks.ts       solstone assetlinks JSON (phone package + direct and Play certs)
-  landing.ts          /p HTML — UA-aware solstone install-fallback page
+  landing.ts          /p HTML and /p.js script — UA-aware solstone install-fallback page
   landing-extro.ts    /x/sync HTML — extro install-fallback page
   index-page.ts       / HTML — bare host page
   robots.ts           robots.txt
@@ -197,7 +200,7 @@ After deploy, check:
 1. **Solstone AASA shape:** paste `https://go.solstone.app` into the [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) and confirm the file parses. Verify the actual handoff on an iPhone with the app installed.
 2. **Extro AASA shape:** paste `https://link.solpbc.org` and confirm only the extro claim parses.
 3. **assetlinks shape:** validate `https://go.solstone.app` with [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator). Then install an APK signed by the certificate being checked and inspect Android's App Links state. The installed app must also declare the matching `autoVerify` intent filter.
-4. **CSP:** open `https://go.solstone.app/p` and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself).
+4. **CSP:** open `https://go.solstone.app/p` and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself; the mac and windows `/p` page also loads `/p.js`).
 
 ## see also
 
