@@ -14,9 +14,9 @@ The solstone pair-flow QR host is now `https://go.solstone.app/p#…`. It moved
 off `link.solpbc.org` before launch.
 
 > link-host adds no analytics, cookies, third-party scripts, or application
-> request logs. Its production config disables Cloudflare's persisted built-in
-> invocation events. Payload data rides in the URL fragment, which never enters
-> HTTP. Open source so you can verify.
+> request logs. Its production config turns off Workers Logs, Cloudflare's log
+> store for this Worker (property 3 below gives its limit). Payload data rides
+> in the URL fragment, which never enters HTTP. Open source so you can verify.
 
 ## what it is
 
@@ -71,10 +71,10 @@ These are structural, not policy:
    scripts. The one script is the desktop pairing page's, served from this
    origin. It copies the fragment into the button's `solstone:` link and makes
    no requests, and CSP blocks scripted connection APIs.
-3. **Persisted invocation events are disabled.** Cloudflare's built-in
-   per-request invocation logs are explicitly off in `wrangler.toml`. Workers
-   Logs remains enabled for deliberate application error output; this source
-   currently emits no application logs.
+3. **Workers Logs is off.** `wrangler.toml` turns it off, invocation events
+   included, and this source emits no application logs. That setting covers this
+   Worker's log store. It doesn't change what Cloudflare's network records when
+   it handles a request.
 4. **Open source.** This repo is public from first commit. Readers can inspect
    the source and compare its expected responses with the live host.
 

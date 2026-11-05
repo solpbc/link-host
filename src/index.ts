@@ -27,9 +27,8 @@
 //     open-in-app script, which reads the fragment and makes no requests.
 //   - The URL fragment is processed client-side per RFC 3986 and never enters
 //     the HTTP request, independently of platform logging configuration.
-//   - `wrangler.toml` disables Cloudflare's built-in invocation events. This
-//     source emits no application logs; Workers Logs stays available for
-//     deliberate operational error output.
+//   - `wrangler.toml` turns Workers Logs off, invocation events included. This
+//     source emits no application logs.
 //
 // See the private product spec for this host for
 // the full design.

@@ -33,21 +33,38 @@ function tomlSectionSettings(toml: string, sectionName: string): Map<string, str
 	return settings;
 }
 
-function invocationLogsAreDisabled(toml: string): boolean {
-	return tomlSectionSettings(toml, "observability.logs").get("invocation_logs") === "false";
+function workersLogsAreOff(toml: string): boolean {
+	const observability = tomlSectionSettings(toml, "observability");
+	const logs = tomlSectionSettings(toml, "observability.logs");
+
+	return (
+		observability.get("enabled") === "false" &&
+		logs.get("enabled") === "false" &&
+		logs.get("persist") === "false" &&
+		logs.get("invocation_logs") === "false"
+	);
 }
 
 describe("link-host Worker", () => {
-	it("disables persisted Cloudflare invocation logs in production config", () => {
-		expect(invocationLogsAreDisabled(WRANGLER_TOML)).toBe(true);
+	it("turns Workers Logs off in production config", () => {
+		expect(workersLogsAreOff(WRANGLER_TOML)).toBe(true);
 	});
 
-	it("fails the config guard if invocation logging is enabled or unspecified", () => {
-		const enabled = WRANGLER_TOML.replace("invocation_logs = false", "invocation_logs = true");
-		const unspecified = WRANGLER_TOML.replace("invocation_logs = false", "");
+	it.each([
+		[
+			"observability",
+			"enabled = false\n\n[observability.logs]",
+			"enabled = true\n\n[observability.logs]",
+		],
+		["logs", "[observability.logs]\nenabled = false", "[observability.logs]\nenabled = true"],
+		["persistence", "persist = false", "persist = true"],
+		["invocation logs", "invocation_logs = false", "invocation_logs = true"],
+		["unspecified invocation logs", "invocation_logs = false", ""],
+	])("fails the config guard when %s changes", (_name, from, to) => {
+		const changed = WRANGLER_TOML.replace(from, to);
 
-		expect(invocationLogsAreDisabled(enabled)).toBe(false);
-		expect(invocationLogsAreDisabled(unspecified)).toBe(false);
+		expect(changed).not.toBe(WRANGLER_TOML);
+		expect(workersLogsAreOff(changed)).toBe(false);
 	});
 
 	it("serves the solstone AASA only on go.solstone.app", async () => {

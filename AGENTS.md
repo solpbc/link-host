@@ -48,11 +48,11 @@ A change that weakens any of them is the wrong change regardless of size:
 - **No payload ever reaches or is logged by the Worker.** The handoff payload
   rides in the URL *fragment*, which is client-side per RFC 3986. The Worker
   must never depend on, parse, store, or log it.
-- **No routine request logging.** `wrangler.toml` explicitly disables
-  Cloudflare's built-in invocation events. Workers Logs remains enabled only
-  for deliberate application error output; the Worker currently emits no
-  application logs. Keep this platform control separate from the HTTP fragment
-  guarantee above.
+- **No routine request logging.** `wrangler.toml` turns Workers Logs off,
+  invocation events included, and the Worker emits no application logs. The
+  setting doesn't reach what Cloudflare's network records when it handles a
+  request. Keep it separate from the HTTP fragment guarantee above. To debug,
+  `wrangler tail` streams live and doesn't write to Workers Logs.
 - **No beaconing surface.** The only JavaScript is the desktop pairing page's
   same-origin script, which copies the fragment into the button's `solstone:`
   link and makes no requests. The pages' CSP blocks scripted connection APIs
