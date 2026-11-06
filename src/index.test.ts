@@ -160,8 +160,18 @@ describe("link-host Worker", () => {
 			})
 		).text();
 		expect(linux).toContain("solstone-linux setup &lt; pairing-link.txt");
-		expect(linux).not.toContain('id="open-app"');
-		expect(linux).not.toContain("/p.js");
+		expect(linux).toContain('id="open-app"');
+		expect(linux).toContain("/p.js");
+		expect(linux).toContain("copy it from the address bar");
+
+		const chromeos = await (
+			await get("https://go.solstone.app/p", {
+				headers: { "User-Agent": "Mozilla/5.0 (X11; CrOS x86_64 16000.0.0) Chrome/141.0" },
+			})
+		).text();
+		expect(chromeos).toContain("pair this computer with your journal.");
+		expect(chromeos).not.toContain('id="open-app"');
+		expect(chromeos).not.toContain("/p.js");
 	});
 
 	it("serves solstone assetlinks only on go.solstone.app", async () => {

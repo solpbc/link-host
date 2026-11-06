@@ -52,7 +52,7 @@ const IOS_STORE_URL = "https://apps.apple.com/app/id6776850664";
 const ANDROID_STORE_URL =
 	"https://play.google.com/store/apps/details?id=app.solstone.observer.phone";
 
-type Platform = "ios" | "android" | "linux" | "other";
+type Platform = "ios" | "android" | "chromeos" | "desktop";
 
 function detectPlatform(userAgent: string): Platform {
 	const ua = userAgent.toLowerCase();
@@ -62,15 +62,16 @@ function detectPlatform(userAgent: string): Platform {
 	// destination (both buttons are always shown).
 	if (/iphone|ipad|ipod/.test(ua)) return "ios";
 	if (/android/.test(ua)) return "android";
-	// The solstone app on linux has no link handler, so a linux or ChromeOS
-	// browser gets the desktop page without the open-in-app button.
-	if (/linux|cros/.test(ua)) return "linux";
-	return "other";
+	// There is no solstone app for ChromeOS to open, so it gets the desktop
+	// page without the open-in-app button.
+	if (/cros/.test(ua)) return "chromeos";
+	return "desktop";
 }
 
 export function renderLanding(userAgent: string): string {
 	const platform = detectPlatform(userAgent);
-	if (platform === "other" || platform === "linux") return renderDesktop(platform === "other");
+	if (platform === "desktop" || platform === "chromeos")
+		return renderDesktop(platform === "desktop");
 	const iosFirst = platform !== "android";
 	const iosButton = `<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>`;
 	const androidButton = `<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>`;
@@ -91,8 +92,9 @@ export function renderLanding(userAgent: string): string {
 // The store buttons stay on the desktop page, second: an iPad's Safari
 // reports a desktop user agent, and an iPad without the app lands here.
 function renderDesktop(offerOpenApp: boolean): string {
-	// Mac and windows get the open-in-app button; the script reveals it only
-	// when the page carries a pairing fragment.
+	// Mac, windows and linux get the open-in-app button; the script reveals it
+	// only when the page carries a pairing fragment. The paste instructions stay
+	// beside it, since a browser can't tell whether the app is installed.
 	const openApp = offerOpenApp
 		? `<div id="open-app-block" hidden>
 			<div class="ctas"><a class="cta" id="open-app" href="#">${DESKTOP_OPEN_APP}</a></div>
