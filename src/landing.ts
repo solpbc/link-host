@@ -25,7 +25,7 @@ const SUB =
 	"you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.";
 const CTA_IOS = "get solstone for iphone";
 const CTA_ANDROID = "get solstone for android";
-const FOOTER = "sol pbc · open source · this page collects nothing.";
+const FOOTER = "sol pbc · open source · no cookies, no tracking.";
 
 // A desktop has no app to hand the link to automatically, so the page asks
 // for a paste. The link is this page's own address: the pairing secret sits

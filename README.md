@@ -67,8 +67,8 @@ These are structural, not policy:
 1. **The URL fragment never enters HTTP.** RFC 3986 fragments are processed
    client-side, so the pairing payload is absent from the request independently
    of any logging configuration.
-2. **The pages collect nothing.** No cookies. No analytics. No third-party
-   scripts. The one script is the desktop pairing page's, served from this
+2. **The pages set no cookies and run no analytics or third-party scripts.**
+   The one script is the desktop pairing page's, served from this
    origin. It copies the fragment into the button's `solstone:` link and makes
    no requests, and CSP blocks scripted connection APIs.
 3. **Workers Logs is off.** `wrangler.toml` turns it off, invocation events
@@ -77,6 +77,9 @@ These are structural, not policy:
    it handles a request.
 4. **Open source.** This repo is public from first commit. Readers can inspect
    the source and compare its expected responses with the live host.
+
+A visit still leaves edge logs. Cloudflare hosts this Worker and collects
+standard edge logs of each request. The fragment is never in them.
 
 External API calls from the Worker: none.
 

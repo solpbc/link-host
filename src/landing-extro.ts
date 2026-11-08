@@ -4,7 +4,7 @@
 // Structurally mirrors src/landing.ts. When that file's scaffold changes (CSS, semantic HTML, CSP-relevant inline content), audit this file for parity.
 
 const SUB = "this link wakes up extro-mobile to sync a file you shared.";
-const FOOTER = "sol pbc | open source | this page collects nothing.";
+const FOOTER = "sol pbc · open source · no cookies, no tracking.";
 
 export function renderExtroSync(): string {
 	return `<!doctype html>

@@ -6,7 +6,7 @@
 // copy slots. Strict CSP; no analytics, no cookies, no third-party scripts.
 
 const BODY =
-	"this is sol pbc's universal app handoff host. it bridges native-mobile flows for solstone and other sol pbc products without ever seeing your data — every payload rides in the URL fragment, which never reaches this server. open source at github.com/solpbc/link-host.";
+	"links at this address open in sol pbc's apps. what a link carries sits after the # in its address, and that part never reaches this server. open source at github.com/solpbc/link-host.";
 
 const REPO_URL = "https://github.com/solpbc/link-host";
 const SOLPBC_URL = "https://solpbc.org";
