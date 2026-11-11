@@ -1,0 +1,23 @@
+{
+  "description": "found as html title.",
+  "context": "document title of the desktop pairing page. the host is this site, not a translation. the phone page uses the same host with different words.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 46,
+  "source_revision": "77e1d82ca4a74b243b81f149b2d6d2391648be7881d9555fadcf0a26f24b582c",
+  "risk": "routine",
+  "auto_merge": true,
+  "protected_slots": [
+    {
+      "name": "host",
+      "kind": "url",
+      "value": "go.solstone.app"
+    }
+  ]
+}

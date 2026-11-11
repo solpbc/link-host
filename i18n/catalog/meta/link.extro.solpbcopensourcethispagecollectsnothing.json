@@ -1,0 +1,16 @@
+{
+  "description": "found as js const. voice: the verb collect is on the retired list. left as found. CMO owns a wording change.",
+  "context": "found as js const. voice: the verb collect is on the retired list. left as found. CMO owns a wording change.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 48,
+  "source_revision": "795317704bb57f48fdfe06b7888140d13063d7fdeb30b0a1f2365d9de4ebf84f",
+  "risk": "routine",
+  "auto_merge": true
+}

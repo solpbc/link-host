@@ -1,0 +1,23 @@
+{
+  "description": "found as js const.",
+  "context": "Body copy inlink-host/src/landing.ts (DESKTOP_LINUX).",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 189,
+  "source_revision": "f7da7f5be2d0799352d1735a08f7be46354451b184b80c3917bd7e5997bf003c",
+  "risk": "routine",
+  "auto_merge": true,
+  "protected_slots": [
+    {
+      "name": "filename",
+      "kind": "accepted-input",
+      "value": "pairing-link.txt"
+    }
+  ]
+}

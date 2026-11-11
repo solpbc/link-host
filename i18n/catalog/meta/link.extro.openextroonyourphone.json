@@ -1,0 +1,16 @@
+{
+  "description": "found as html h1.",
+  "context": "found as html h1.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 24,
+  "source_revision": "6a4774e5053fd4dbf9776b963d41b2619fc6bd5b19919d0ac52497a6f170bd86",
+  "risk": "routine",
+  "auto_merge": true
+}

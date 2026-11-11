@@ -1,0 +1,23 @@
+{
+  "description": "found as js const. src/index-page.ts:18 replaces this exact host substring with a link. a translation that drops the substring loses the link.",
+  "context": "the bare-host page, when someone opens go.solstone.app or link.solpbc.org with no path. the page speaks to that person. the repository address is a link, not a substring the code searches for.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 210,
+  "source_revision": "7ba2acf62ffce2c54e810203c35e7ad0add0ea74703af58fb3f903979f18d69d",
+  "risk": "routine",
+  "auto_merge": true,
+  "protected_slots": [
+    {
+      "name": "repo",
+      "kind": "url",
+      "value": "github.com/solpbc/link-host"
+    }
+  ]
+}

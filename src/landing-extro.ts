@@ -3,8 +3,12 @@
 
 // Structurally mirrors src/landing.ts. When that file's scaffold changes (CSS, semantic HTML, CSP-relevant inline content), audit this file for parity.
 
-const SUB = "this link wakes up extro-mobile to sync a file you shared.";
-const FOOTER = "sol pbc · open source · no cookies, no tracking.";
+import { t } from "./i18n";
+
+const TITLE = t("link.extro.openextrolinksolpbcorg");
+const H1 = t("link.extro.openextroonyourphone");
+const SUB = t("link.extro.thislinkwakesupextromobiletosync");
+const FOOTER = t("link.extro.solpbcopensourcethispagecollectsnothing");
 
 export function renderExtroSync(): string {
 	return `<!doctype html>
@@ -12,7 +16,7 @@ export function renderExtroSync(): string {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>open extro - link.solpbc.org</title>
+	<title>${TITLE}</title>
 	<meta name="robots" content="noindex, nofollow">
 	<style>
 		:root { --bg: #fbfaf6; --fg: #1a1a1a; --muted: #5a5a5a; }
@@ -41,7 +45,7 @@ export function renderExtroSync(): string {
 </head>
 <body>
 	<main>
-		<h1>open extro on your phone</h1>
+		<h1>${H1}</h1>
 		<p class="sub">${SUB}</p>
 		<footer>${FOOTER}</footer>
 	</main>

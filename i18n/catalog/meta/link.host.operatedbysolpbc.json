@@ -1,0 +1,16 @@
+{
+  "description": "found as html footer.",
+  "context": "found as html footer.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 20,
+  "source_revision": "c6cf4696aeebeaf7954e6799982f3cf8b9e5db95574463a8566f2c3afa8c8fe2",
+  "risk": "routine",
+  "auto_merge": true
+}

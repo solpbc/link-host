@@ -5,8 +5,10 @@
 // hostnames into a browser directly. Structural, not promotional. CMO-owned
 // copy slots. Strict CSP; no analytics, no cookies, no third-party scripts.
 
-const BODY =
-	"links at this address open in sol pbc's apps. what a link carries sits after the # in its address, and that part never reaches this server. open source at github.com/solpbc/link-host.";
+import { t } from "./i18n";
+
+const BODY = t("link.host.thisissolpbcsuniversalapphandoff");
+const FOOTER = t("link.host.operatedbysolpbc");
 
 const REPO_URL = "https://github.com/solpbc/link-host";
 const SOLPBC_URL = "https://solpbc.org";
@@ -19,6 +21,7 @@ export function renderIndex(host: string): string {
 		"github.com/solpbc/link-host",
 		`<a href="${REPO_URL}">github.com/solpbc/link-host</a>`,
 	);
+	const linkedFooter = FOOTER.replace("sol pbc", `<a href="${SOLPBC_URL}">sol pbc</a>`);
 	return `<!doctype html>
 <html lang="en">
 <head>
@@ -81,7 +84,7 @@ export function renderIndex(host: string): string {
 	<main>
 		<h1>${host}</h1>
 		<p>${linkedBody}</p>
-		<footer>operated by <a href="${SOLPBC_URL}">sol pbc</a>.</footer>
+		<footer>${linkedFooter}</footer>
 	</main>
 </body>
 </html>

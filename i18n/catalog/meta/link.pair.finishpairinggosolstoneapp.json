@@ -1,0 +1,23 @@
+{
+  "description": "found as html title.",
+  "context": "document title of the phone pairing page. the host is this site, not a translation.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 47,
+  "source_revision": "c1e4b653e32269ca30cbe404ca0b5d49c5ede501c33dece9a35806195a7283ea",
+  "risk": "routine",
+  "auto_merge": true,
+  "protected_slots": [
+    {
+      "name": "host",
+      "kind": "url",
+      "value": "go.solstone.app"
+    }
+  ]
+}

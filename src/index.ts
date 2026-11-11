@@ -35,6 +35,7 @@
 
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
+import { t } from "./i18n";
 import { renderIndex } from "./index-page";
 import { DESKTOP_SCRIPT, renderLanding } from "./landing";
 import { renderExtroSync } from "./landing-extro";
@@ -112,7 +113,7 @@ function textResponse(body: string, status = 200): Response {
 
 function methodNotAllowed(): Response {
 	// 405 must include an Allow header per RFC 7231 §6.5.5.
-	return new Response("method not allowed", {
+	return new Response(t("link.http.methodnotallowed"), {
 		status: 405,
 		headers: {
 			Allow: "GET, HEAD",
@@ -123,7 +124,7 @@ function methodNotAllowed(): Response {
 }
 
 function notFound(): Response {
-	return new Response("not found", {
+	return new Response(t("link.http.notfound"), {
 		status: 404,
 		headers: {
 			"Content-Type": "text/plain; charset=utf-8",

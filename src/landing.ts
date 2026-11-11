@@ -20,29 +20,28 @@
 // the authoritative copy lives in the private product spec for this host,
 // §literal copy. Brand iterates via PR + manual deploy.
 
-const H1 = "finish pairing your phone with your journal.";
-const SUB =
-	"you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.";
-const CTA_IOS = "get solstone for iphone";
-const CTA_ANDROID = "get solstone for android";
-const FOOTER = "sol pbc · open source · no cookies, no tracking.";
+import { t } from "./i18n";
+
+const H1 = t("link.pair.finishpairingyourphonewithyourjournal");
+const SUB = t("link.pair.youopenedapairinglinkbutsolstonemobile");
+const CTA_IOS = t("link.pair.getsolstoneforiphone");
+const CTA_ANDROID = t("link.pair.getsolstoneforandroid");
+const FOOTER = t("link.pair.solpbcopensourcethispagecollectsnothing");
 
 // A desktop has no app to hand the link to automatically, so the page asks
 // for a paste. The link is this page's own address: the pairing secret sits
 // in the fragment, which the browser keeps and never sends to this server.
-const DESKTOP_H1 = "pair this computer with your journal.";
-const DESKTOP_SUB =
-	"this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.";
-const DESKTOP_OPEN_APP = "open in the solstone app";
-const DESKTOP_OPEN_APP_OR = "or paste it in yourself:";
-const DESKTOP_LINUX = "on linux, you can also save it as pairing-link.txt and run:";
+const DESKTOP_H1 = t("link.pair.pairthiscomputerwithyourjournal");
+const DESKTOP_SUB = t("link.pair.thispagesaddressisyourpairinglink");
+const DESKTOP_OPEN_APP = t("link.pair.openinthesolstoneapp");
+const DESKTOP_OPEN_APP_OR = t("link.pair.orpasteitinyourself");
+const DESKTOP_LINUX = t("link.pair.onlinuxyoucanalsosaveitas");
 const DESKTOP_LINUX_COMMAND =
 	"systemctl --user stop solstone-linux\nsolstone-linux setup < pairing-link.txt\nsystemctl --user start solstone-linux";
-const DESKTOP_EXPIRY =
-	"this link works once, and only for a few minutes after your journal shows it.";
-const DESKTOP_GET_APP = "don't have the solstone app on this computer yet?";
-const DESKTOP_GET_APP_LINK = "solstone.app/install";
-const DESKTOP_PHONE = "pairing a phone instead?";
+const DESKTOP_EXPIRY = t("link.pair.thislinkworksonceandonlyfora");
+const DESKTOP_GET_APP = t("link.pair.donthavethesolstoneapponthis");
+const DESKTOP_GET_APP_LINK = t("link.pair.solstoneappinstall");
+const DESKTOP_PHONE = t("link.pair.pairingaphoneinstead");
 const INSTALL_URL = "https://solstone.app/install";
 
 // Store URLs, the same listings solstone.app/phone links. The App Store
@@ -80,7 +79,7 @@ export function renderLanding(userAgent: string): string {
 		: `${androidButton}\n\t\t\t${iosButton}`;
 
 	return page(
-		"finish pairing",
+		t("link.pair.finishpairinggosolstoneapp"),
 		`<h1>${H1}</h1>
 		<p class="sub">${SUB}</p>
 		<div class="ctas">
@@ -103,7 +102,7 @@ function renderDesktop(offerOpenApp: boolean): string {
 		`
 		: "";
 	return page(
-		"pair a device",
+		t("link.pair.pairadevicegosolstoneapp"),
 		`<h1>${DESKTOP_H1}</h1>
 		${openApp}<p class="sub">${DESKTOP_SUB}</p>
 		<p class="note">${DESKTOP_LINUX}</p>
@@ -137,7 +136,7 @@ function page(title: string, body: string): string {
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>${title} · go.solstone.app</title>
+	<title>${title}</title>
 	<meta name="robots" content="noindex, nofollow">
 	<style>
 		:root {

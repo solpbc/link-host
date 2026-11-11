@@ -5,3 +5,8 @@ declare module "*.toml?raw" {
 	const source: string;
 	export default source;
 }
+
+declare module "*.ftl?raw" {
+	const source: string;
+	export default source;
+}

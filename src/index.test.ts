@@ -2,8 +2,11 @@
 // Copyright (c) 2026 sol pbc
 
 import { describe, expect, it } from "vitest";
+import SOURCE_FTL from "../i18n/catalog/source/en-US.ftl?raw";
+import CASES from "../i18n/generated/cases.json";
 import WRANGLER_TOML from "../wrangler.toml?raw";
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
+import { MESSAGE_IDS, t } from "./i18n";
 import worker from "./index";
 
 const HTML_CSP =
@@ -116,6 +119,8 @@ describe("link-host Worker", () => {
 			})
 		).text();
 		expect(desktop).toContain("pair this computer with your journal.");
+		expect(desktop).toContain("on linux, you can also save the link as pairing-link.txt and run:");
+		expect(desktop).not.toContain("save it as pairing-link.txt");
 		expect(desktop).toContain("solstone-linux setup &lt; pairing-link.txt");
 		expect(desktop.indexOf("solstone app on this computer")).toBeLessThan(
 			desktop.indexOf("get solstone for iphone"),
@@ -252,5 +257,20 @@ describe("link-host Worker", () => {
 		const res = await get("https://go.solstone.app/nope");
 
 		expect(res.status).toBe(404);
+	});
+
+	it("keeps the i18n catalog, generated ESM bundle, and MessageId table in sync", () => {
+		const ftlKeys = [...SOURCE_FTL.matchAll(/^([a-z0-9_.]+)\s*=/gm)].map((m) => m[1]).sort();
+		const caseKeys = CASES.cases.map((c) => c.message_id).sort();
+		const idKeys = [...MESSAGE_IDS].sort();
+
+		expect(idKeys).toEqual(ftlKeys);
+		expect(caseKeys).toEqual(ftlKeys);
+
+		for (const id of MESSAGE_IDS) {
+			const rendered = t(id);
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).not.toMatch(/[\u2068\u2069]/);
+		}
 	});
 });

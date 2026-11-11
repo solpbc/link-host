@@ -1,0 +1,16 @@
+{
+  "description": "found as json error.",
+  "context": "HTTP 405 response text in link-host/src/index.ts.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 18,
+  "source_revision": "18472077a065632174b2af1741921712fc775143a4c7e6da5372c3ddddaf3d2e",
+  "risk": "routine",
+  "auto_merge": true
+}

@@ -1,0 +1,16 @@
+{
+  "description": "found as js const.",
+  "context": "found as js const.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 24,
+  "source_revision": "392a09efe8700b5aed63405b63178b9e372e5c578a0c1b17c51ac8fc85a93d6f",
+  "risk": "routine",
+  "auto_merge": true
+}
