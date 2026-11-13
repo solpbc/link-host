@@ -58,6 +58,111 @@
       "locales": []
     },
     {
+      "id": "link.journal.applebadge",
+      "source": "a304a43124b965d8c29877b7200d095c7a717aa24da7d1e9af818e3674a4da91",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.attribution",
+      "source": "686c199c2baa8c9b0f0433fb71c39ad5817961df23fc198c3e04915a581899ce",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.body",
+      "source": "a65a012b3e80e20f191e598ab9469d9f82dd19b6a80c1835180cde1e635c841f",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.copyagain",
+      "source": "d69e4ee72ff8900f4932666036a03c469ebd49f7ed63fd8440babfa6da0cacb7",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.fallbackbody",
+      "source": "f406200380cf145ecca07e5cd328c6885b59818bb338641871aad7b7bd5fe49f",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.fallbacktitle",
+      "source": "d38dded52b52415a3e8064d60312f9e8870e55db1c59b93be6c1445560b7721f",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.footer",
+      "source": "8aae63e741b223dffc5286b7e8d44b98e4fcb835af9c7ad48a13bab516f58efe",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.googlebadge",
+      "source": "6ff89c65adf77724b00faab51bf590f0d9fe1cf0b69e93eefca817d6d7655c23",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.installbody",
+      "source": "1f99267c50232f2f13fe0b32ba54e52f5f67fe31b902bb69563c4aff2e0a3a42",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.installdesktop",
+      "source": "9e8ef876d8e72c1c8332c2dca7867956d38c8458855384370432bfea3795cac0",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.installtitle",
+      "source": "700cc728110c4bc6b1bc78f2912724c0a062a0bb5f982953fc20054488e53cd2",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.invalid",
+      "source": "f02516d974535b7b5ef22171ecdb14f73bc9f8ae54299ffac5946558c69e3abe",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.missing",
+      "source": "b5d9caf0f002a21c03b81da59f211c66e95818dcd8297b423aff4072c37289e6",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.open",
+      "source": "db850f4dd321ed87af6c619f1c508acd779081efa2a23df5707c2e437a4901a2",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.journal.title",
+      "source": "53eb791a3a6e5cacfb9ca3525170989f5f15ad4d1fbbc7ce2128d3dd92a48dc8",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
       "id": "link.pair.donthavethesolstoneapponthis",
       "source": "f75b4312832731339f8fcecbfba1dd9e1d1edb480e2b555eeb8eb0a36749a275",
       "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",

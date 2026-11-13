@@ -1,0 +1,16 @@
+{
+  "description": "Journal-link handoff page.",
+  "context": "Journal-link handoff page; the page cannot detect installation or launch success.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 54,
+  "source_revision": "a65a012b3e80e20f191e598ab9469d9f82dd19b6a80c1835180cde1e635c841f",
+  "risk": "routine",
+  "auto_merge": true
+}

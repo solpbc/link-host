@@ -83,7 +83,7 @@ describe("link-host Worker", () => {
 		expect(res.headers.get("Content-Type")).toBe("application/json");
 		expect(res.headers.get("Cache-Control")).toBe("public, max-age=3600");
 		expect(body.applinks.details[0].appIDs).toEqual([solstoneAppId]);
-		expect(body.applinks.details[0].components).toEqual([{ "/": "/p" }, { "/": "/p2" }]);
+		expect(body.applinks.details[0].components).toEqual([{ "/": "/p" }]);
 		expect(body.webcredentials?.apps).toEqual([solstoneAppId]);
 		expect(JSON.stringify(body)).not.toContain(extroAppId);
 	});
@@ -110,6 +110,33 @@ describe("link-host Worker", () => {
 		expect(res.status).toBe(200);
 		expect(res.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
 		expect(res.headers.get("Content-Security-Policy")).toBe(HTML_CSP);
+	});
+
+	it.each([
+		"/j",
+		"/j.js",
+		"/j-assets/badge-app-store.svg",
+		"/j-assets/badge-google-play.png",
+		"/j-assets/Comfortaa-Variable.woff2",
+	])("keeps journal route %s on its own host without cookies", async (path) => {
+		const res = await get(`https://go.solstone.app${path}`);
+		expect(res.status).toBe(200);
+		expect(res.headers.has("Set-Cookie")).toBe(false);
+		expect((await get(`https://link.solpbc.org${path}`)).status).toBe(404);
+		expect((await get(`https://unknown.invalid${path}`)).status).toBe(404);
+		expect((await get(`https://go.solstone.app${path}`, { method: "POST" })).status).toBe(405);
+	});
+
+	it("keeps journal content under the same restrictive CSP and only local resources", async () => {
+		const res = await get("https://go.solstone.app/j");
+		expect(res.headers.get("Content-Security-Policy")).toBe(HTML_CSP);
+		expect(res.headers.get("Vary")).toBe("User-Agent");
+		const html = await res.text();
+		expect(html).toContain('<script src="/j.js" defer>');
+		expect(html).not.toMatch(/<script(?![^>]*src=)/);
+		expect(html).not.toMatch(/(?:src|url)\s*[=(]\s*["']?https?:/);
+		const script = await (await get("https://go.solstone.app/j.js")).text();
+		expect(script).not.toMatch(/fetch|XMLHttpRequest|sendBeacon|cookie|localStorage/);
 	});
 
 	it("tells a desktop to paste the link and keeps the phone stores second", async () => {

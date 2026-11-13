@@ -14,6 +14,36 @@ m6c696e6b2e687474702e6d6574686f646e6f74616c6c6f776564 = method not allowed
 
 m6c696e6b2e687474702e6e6f74666f756e64 = not found
 
+m6c696e6b2e6a6f75726e616c2e6170706c656261646765 = Download on the App Store
+
+m6c696e6b2e6a6f75726e616c2e6174747269627574696f6e = Apple and the Apple logo are trademarks of Apple Inc. App Store is a service mark of Apple Inc. Google Play and the Google Play logo are trademarks of Google LLC.
+
+m6c696e6b2e6a6f75726e616c2e626f6479 = open this place in your journal with the solstone app.
+
+m6c696e6b2e6a6f75726e616c2e636f7079616761696e = copy the full link from your chat and open it again.
+
+m6c696e6b2e6a6f75726e616c2e66616c6c6261636b626f6479 = copy the full link from your chat into your usual browser, then try again.
+
+m6c696e6b2e6a6f75726e616c2e66616c6c6261636b7469746c65 = app didn't open?
+
+m6c696e6b2e6a6f75726e616c2e666f6f746572 = sol pbc · open source
+
+m6c696e6b2e6a6f75726e616c2e676f6f676c656261646765 = Get it on Google Play
+
+m6c696e6b2e6a6f75726e616c2e696e7374616c6c626f6479 = install it, then open this link again.
+
+m6c696e6b2e6a6f75726e616c2e696e7374616c6c6465736b746f70 = get the solstone app for your computer
+
+m6c696e6b2e6a6f75726e616c2e696e7374616c6c7469746c65 = need the solstone app?
+
+m6c696e6b2e6a6f75726e616c2e696e76616c6964 = this journal link isn't valid
+
+m6c696e6b2e6a6f75726e616c2e6d697373696e67 = this link isn't complete
+
+m6c696e6b2e6a6f75726e616c2e6f70656e = open in the solstone app
+
+m6c696e6b2e6a6f75726e616c2e7469746c65 = open your journal
+
 m6c696e6b2e706169722e646f6e7468617665746865736f6c73746f6e656170706f6e74686973 = don't have the solstone app on this computer yet?
 
 m6c696e6b2e706169722e66696e69736870616972696e67676f736f6c73746f6e65617070 = finish pairing · { "go.solstone.app" }

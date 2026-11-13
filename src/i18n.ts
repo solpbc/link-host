@@ -6,6 +6,22 @@ import { render } from "../i18n/generated/esm/link-host/api.mjs";
 export const SOURCE_LOCALE = "en-US";
 
 export const MESSAGE_IDS = [
+	"link.journal.title",
+	"link.journal.body",
+	"link.journal.open",
+	"link.journal.fallbacktitle",
+	"link.journal.fallbackbody",
+	"link.journal.installtitle",
+	"link.journal.installbody",
+	"link.journal.installdesktop",
+	"link.journal.missing",
+	"link.journal.invalid",
+	"link.journal.copyagain",
+	"link.journal.footer",
+	"link.journal.applebadge",
+	"link.journal.googlebadge",
+	"link.journal.attribution",
+
 	"link.extro.openextrolinksolpbcorg",
 	"link.extro.openextroonyourphone",
 	"link.extro.solpbcopensourcethispagecollectsnothing",

@@ -64,6 +64,96 @@ const MESSAGES = {
     arguments: [
     ],
   },
+  "link.journal.applebadge": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e6170706c656261646765",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.attribution": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e6174747269627574696f6e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.body": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e626f6479",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.copyagain": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e636f7079616761696e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.fallbackbody": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e66616c6c6261636b626f6479",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.fallbacktitle": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e66616c6c6261636b7469746c65",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.footer": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e666f6f746572",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.googlebadge": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e676f6f676c656261646765",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.installbody": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e696e7374616c6c626f6479",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.installdesktop": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e696e7374616c6c6465736b746f70",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.installtitle": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e696e7374616c6c7469746c65",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.invalid": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e696e76616c6964",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.missing": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e6d697373696e67",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.open": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e6f70656e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.title": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e7469746c65",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
   "link.pair.donthavethesolstoneapponthis": {
     resourceKey: "m6c696e6b2e706169722e646f6e7468617665746865736f6c73746f6e656170706f6e74686973",
     formatIntent: "text",
@@ -164,23 +254,25 @@ const MESSAGES = {
 
 const BUNDLES = new Map();
 
-function getBundle(locale) {
-  let bundle = BUNDLES.get(locale);
+function getBundle(locale, useIsolating) {
+  const cacheKey = `${locale}:${useIsolating}`;
+  let bundle = BUNDLES.get(cacheKey);
   if (!bundle) {
     const locInfo = LOCALES[locale];
     if (!locInfo) throw new Error(`Unknown locale: ${locale}`);
     const ftlSource = CATALOGS[locale];
     if (ftlSource === undefined) throw new Error(`Unknown catalog: ${locale}`);
     const resource = new FluentResource(ftlSource);
-    bundle = new FluentBundle(locInfo.bundleLocale);
+    bundle = new FluentBundle(locInfo.bundleLocale, { useIsolating });
     const errors = bundle.addResource(resource);
     if (errors.length > 0) throw new Error(`FTL errors: ${errors.join(", ")}`);
-    BUNDLES.set(locale, bundle);
+    BUNDLES.set(cacheKey, bundle);
   }
   return bundle;
 }
 
-export function render(locale, messageId, args = []) {
+export function render(locale, messageId, args = [], { useIsolating = true } = {}) {
+  if (typeof useIsolating !== "boolean") throw new Error("Expected boolean useIsolating");
   const locInfo = LOCALES[locale];
   if (!locInfo) throw new Error(`Unknown locale: ${locale}`);
 
@@ -251,7 +343,7 @@ export function render(locale, messageId, args = []) {
     fArgs.i18nCategory = select ? select(Math.abs(fArgs[msgInfo.selectorVar])) : "other";
   }
 
-  const bundle = getBundle(locale);
+  const bundle = getBundle(locale, useIsolating);
 
   const targetKey = msgInfo.formatIntent === "enum" ? (msgInfo.variantKeys[selectedVariant] || msgInfo.defaultKey) : msgInfo.resourceKey;
   const message = bundle.getMessage(targetKey);

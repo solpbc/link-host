@@ -22,3 +22,33 @@ link.pair.solstoneappinstall = solstone.app/install
 link.pair.thislinkworksonceandonlyfora = this link works once, and only for a few minutes after your journal shows it.
 link.pair.thispagesaddressisyourpairinglink = this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.
 link.pair.youopenedapairinglinkbutsolstonemobile = you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.
+
+link.journal.title = open your journal
+
+link.journal.body = open this place in your journal with the solstone app.
+
+link.journal.open = open in the solstone app
+
+link.journal.fallbacktitle = app didn't open?
+
+link.journal.fallbackbody = copy the full link from your chat into your usual browser, then try again.
+
+link.journal.installtitle = need the solstone app?
+
+link.journal.installbody = install it, then open this link again.
+
+link.journal.installdesktop = get the solstone app for your computer
+
+link.journal.missing = this link isn't complete
+
+link.journal.invalid = this journal link isn't valid
+
+link.journal.copyagain = copy the full link from your chat and open it again.
+
+link.journal.footer = sol pbc · open source
+
+link.journal.applebadge = Download on the App Store
+
+link.journal.googlebadge = Get it on Google Play
+
+link.journal.attribution = Apple and the Apple logo are trademarks of Apple Inc. App Store is a service mark of Apple Inc. Google Play and the Google Play logo are trademarks of Google LLC.

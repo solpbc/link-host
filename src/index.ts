@@ -37,6 +37,8 @@ import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
 import { t } from "./i18n";
 import { renderIndex } from "./index-page";
+import { JOURNAL_SCRIPT, renderJournal } from "./journal";
+import { JOURNAL_ASSETS } from "./journal-assets";
 import { DESKTOP_SCRIPT, renderLanding } from "./landing";
 import { renderExtroSync } from "./landing-extro";
 import { ROBOTS } from "./robots";
@@ -166,16 +168,18 @@ export default {
 		// match the URL against an installed sol pbc app. UA detection is
 		// server-side; we use it once to pick the primary CTA, then the
 		// header is gone.
-		if (url.pathname === "/p") {
+		if (url.pathname === "/p" || url.pathname === "/j") {
 			if (kind !== "solstone") return notFound();
 			const ua = request.headers.get("User-Agent") ?? "";
-			return htmlResponse(renderLanding(ua));
+			return htmlResponse(url.pathname === "/j" ? renderJournal(ua) : renderLanding(ua), 200, {
+				Vary: "User-Agent",
+			});
 		}
 
 		// The desktop landing page's one script (see `DESKTOP_SCRIPT`).
-		if (url.pathname === "/p.js") {
+		if (url.pathname === "/p.js" || url.pathname === "/j.js") {
 			if (kind !== "solstone") return notFound();
-			return new Response(DESKTOP_SCRIPT, {
+			return new Response(url.pathname === "/j.js" ? JOURNAL_SCRIPT : DESKTOP_SCRIPT, {
 				status: 200,
 				headers: {
 					"Content-Type": "text/javascript; charset=utf-8",
@@ -183,6 +187,22 @@ export default {
 					...COMMON_SECURITY_HEADERS,
 				},
 			});
+		}
+
+		const asset = Object.hasOwn(JOURNAL_ASSETS, url.pathname)
+			? JOURNAL_ASSETS[url.pathname]
+			: undefined;
+		if (asset && kind === "solstone") {
+			return new Response(
+				Uint8Array.from(atob(asset.base64), (c) => c.charCodeAt(0)),
+				{
+					headers: {
+						"Content-Type": asset.type,
+						"Cache-Control": "public, max-age=300",
+						...COMMON_SECURITY_HEADERS,
+					},
+				},
+			);
 		}
 
 		// Extro install-fallback page. Only reached when iOS did NOT match

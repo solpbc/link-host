@@ -6,7 +6,7 @@ A single Cloudflare Worker that serves app-association surfaces for sol pbc's
 native apps, dispatched by request host:
 
 - `go.solstone.app` is the solstone universal-link surface: AASA claiming
-  solstone, `assetlinks.json`, `/p` install-fallback, and webcredentials.
+  solstone, `assetlinks.json`, `/p` pairing fallback, `/j` journal-link fallback, and webcredentials.
 - `link.solpbc.org` is the extro surface: AASA claiming extro only and
   `/x/sync` install-fallback. No solstone, no assetlinks, no webcredentials.
 
@@ -68,9 +68,9 @@ These are structural, not policy:
    client-side, so the pairing payload is absent from the request independently
    of any logging configuration.
 2. **The pages set no cookies and run no analytics or third-party scripts.**
-   The one script is the desktop pairing page's, served from this
-   origin. It copies the fragment into the button's `solstone:` link and makes
-   no requests, and CSP blocks scripted connection APIs.
+   The pairing and journal-link scripts are served from this origin. They copy
+   the exact fragment into an explicit app-opening link and make no requests.
+   CSP blocks scripted connection APIs.
 3. **Workers Logs is off.** `wrangler.toml` turns it off, invocation events
    included, and this source emits no application logs. That setting covers this
    Worker's log store. It doesn't change what Cloudflare's network records when
@@ -92,9 +92,12 @@ External API calls from the Worker: none.
 | `GET /.well-known/apple-app-site-association` | solstone AASA JSON, `application/json`, `Cache-Control: public, max-age=3600`, no redirects |
 | `GET /.well-known/assetlinks.json` | solstone assetlinks JSON, same caching posture |
 | `GET /p` | solstone landing page (HTML, strict CSP) |
-| `GET /p.js` | the desktop pairing page's one script (`text/javascript`, `Cache-Control: public, max-age=300`) |
+| `GET /p.js` | the desktop pairing page's script (`text/javascript`, `Cache-Control: public, max-age=300`) |
+| `GET /j` | journal-link fallback page (HTML, strict CSP) |
+| `GET /j.js` | journal-link fragment validation and explicit handoff script |
+| `GET /j-assets/*` | vendored font and official store badges; unknown assets return `404` |
 | `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
-| `GET /robots.txt` | disallow `/p` and `/x`, allow `/` and `/.well-known/*` |
+| `GET /robots.txt` | disallow `/p`, `/j` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /x/sync` | `404` |
 
 ### `link.solpbc.org`
@@ -104,7 +107,7 @@ External API calls from the Worker: none.
 | `GET /.well-known/apple-app-site-association` | extro AASA JSON, `application/json`, `Cache-Control: public, max-age=3600`, no redirects |
 | `GET /x/sync` | extro landing page (HTML, strict CSP) |
 | `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
-| `GET /robots.txt` | disallow `/p` and `/x`, allow `/` and `/.well-known/*` |
+| `GET /robots.txt` | disallow `/p`, `/j` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /p` | `404` |
 | `GET /.well-known/assetlinks.json` | `404` |
 
@@ -123,6 +126,9 @@ src/
   aasa.ts             two host-specific AASA payloads, solstone + extro
   assetlinks.ts       solstone assetlinks JSON (phone package + direct and Play certs)
   landing.ts          /p HTML and /p.js script — UA-aware solstone install-fallback page
+  journal.ts          /j HTML and /j.js script — journal-link fallback
+  journal-assets.ts   vendored font and official store badges
+  journal-tokens.ts   shared design tokens
   landing-extro.ts    /x/sync HTML — extro install-fallback page
   index-page.ts       / HTML — bare host page
   robots.ts           robots.txt
@@ -131,6 +137,24 @@ package.json          deps, scripts
 tsconfig.json         strict TS
 biome.json            lint + format
 ```
+
+## journal links
+
+`/j#<token>` keeps the complete token in the browser. The page validates the
+outer grammar: 1–512 base64url characters without padding, optionally followed
+by `~` and six digits. It neither decrypts nor re-encodes the token.
+
+An explicit button opens `solstone://open#<token>` on iPhone, iPad and supported
+desktops. Android uses an `intent:` link for the phone package. The browser
+fallback stays visible beneath the button; installation help expands below it.
+The page cannot detect installation, app launch or journal reachability.
+
+Both handoff scripts refresh their destination at load, `hashchange`,
+`pageshow`, and activation, so a reused browser pane cannot keep a previous
+link's destination. Missing or malformed journal tokens remove the destination.
+
+Serving `/j` does not claim it in Apple's association file. That claim is added
+only after the supporting iOS build is available on the App Store.
 
 ## development
 

@@ -124,9 +124,24 @@ function renderDesktop(offerOpenApp: boolean): string {
 export const DESKTOP_SCRIPT = `(function () {
 	var block = document.getElementById("open-app-block");
 	var link = document.getElementById("open-app");
-	if (!block || !link || location.hash.length < 2) return;
-	link.setAttribute("href", "solstone://pair" + location.hash);
-	block.hidden = false;
+	if (!block || !link) return;
+	function refresh() {
+		var ready = location.hash.length > 1;
+		if (ready) link.setAttribute("href", "solstone://pair" + location.hash);
+		else link.removeAttribute("href");
+		block.hidden = !ready;
+		return ready;
+	}
+	refresh();
+	window.addEventListener("hashchange", refresh);
+	window.addEventListener("pageshow", refresh);
+	link.addEventListener("click", function (event) {
+		if (!refresh()) event.preventDefault();
+	});
+	link.addEventListener("auxclick", function (event) {
+		if (!refresh()) event.preventDefault();
+	});
+	link.addEventListener("contextmenu", refresh);
 })();
 `;
 

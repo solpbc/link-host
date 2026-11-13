@@ -14,7 +14,7 @@
 // in sol pbc's internal Apple vendor notes.
 //
 // Split claims: the solstone payload (served on go.solstone.app) claims `/p`
-// for the solstone spl pair-flow, reserves `/p2` for a future v2, and carries
+// for the solstone spl pair-flow and carries
 // webcredentials. The extro payload (served on link.solpbc.org) claims
 // `/x/sync` and carries no webcredentials. Additional sol pbc apps add their
 // own blocks to the relevant host's `applinks.details` and their own paths.
@@ -27,7 +27,7 @@ export const SOLSTONE_AASA = {
 		details: [
 			{
 				appIDs: [SOLSTONE_APP_ID],
-				components: [{ "/": "/p" }, { "/": "/p2" }],
+				components: [{ "/": "/p" }],
 			},
 		],
 	},
