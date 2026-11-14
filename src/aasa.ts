@@ -13,7 +13,7 @@
 // internal product decision; the canonical signing architecture is recorded
 // in sol pbc's internal Apple vendor notes.
 //
-// Split claims: the solstone payload (served on go.solstone.app) claims `/p`
+// Split claims: the solstone payload (served on go.solstone.app) claims `/p` and `/j`
 // for the solstone spl pair-flow and carries
 // webcredentials. The extro payload (served on link.solpbc.org) claims
 // `/x/sync` and carries no webcredentials. Additional sol pbc apps add their
@@ -27,7 +27,7 @@ export const SOLSTONE_AASA = {
 		details: [
 			{
 				appIDs: [SOLSTONE_APP_ID],
-				components: [{ "/": "/p" }],
+				components: [{ "/": "/p" }, { "/": "/j" }],
 			},
 		],
 	},

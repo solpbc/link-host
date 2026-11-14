@@ -83,7 +83,7 @@ describe("link-host Worker", () => {
 		expect(res.headers.get("Content-Type")).toBe("application/json");
 		expect(res.headers.get("Cache-Control")).toBe("public, max-age=3600");
 		expect(body.applinks.details[0].appIDs).toEqual([solstoneAppId]);
-		expect(body.applinks.details[0].components).toEqual([{ "/": "/p" }]);
+		expect(body.applinks.details[0].components).toEqual([{ "/": "/p" }, { "/": "/j" }]);
 		expect(body.webcredentials?.apps).toEqual([solstoneAppId]);
 		expect(JSON.stringify(body)).not.toContain(extroAppId);
 	});

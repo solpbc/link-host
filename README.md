@@ -153,9 +153,6 @@ Both handoff scripts refresh their destination at load, `hashchange`,
 `pageshow`, and activation, so a reused browser pane cannot keep a previous
 link's destination. Missing or malformed journal tokens remove the destination.
 
-Serving `/j` does not claim it in Apple's association file. That claim is added
-only after the supporting iOS build is available on the App Store.
-
 ## development
 
 ```sh
