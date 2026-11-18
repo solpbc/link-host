@@ -82,5 +82,5 @@ m6c696e6b2e706169722e746869736c696e6b776f726b736f6e6365616e646f6e6c79666f7261 = 
 
 m6c696e6b2e706169722e746869737061676573616464726573736973796f757270616972696e676c696e6b = this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.
 
-m6c696e6b2e706169722e796f756f70656e65646170616972696e676c696e6b627574736f6c73746f6e656d6f62696c65 = you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.
+m6c696e6b2e706169722e796f756f70656e65646170616972696e676c696e6b627574736f6c73746f6e656d6f62696c65 = you opened a pairing link, but the solstone app isn't installed yet. install it to finish.
 

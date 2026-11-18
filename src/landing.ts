@@ -45,7 +45,7 @@ const DESKTOP_PHONE = t("link.pair.pairingaphoneinstead");
 const INSTALL_URL = "https://solstone.app/install";
 
 // Store URLs, the same listings solstone.app/mobile links. The App Store
-// lists the app as "solstone mobile" under its numeric id; the Play Store
+// lists the app as "solstone.app" under its numeric id; the Play Store
 // URL uses the phone app's application ID.
 const IOS_STORE_URL = "https://apps.apple.com/app/id6776850664";
 const ANDROID_STORE_URL =

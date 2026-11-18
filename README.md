@@ -29,7 +29,7 @@ Worker serves two app-association handoff hosts from one codebase:
 
 Today `go.solstone.app` is consumed by
 [sol private link (spl)](https://github.com/solpbc/spl) pair-flow QR codes:
-scanning a `https://go.solstone.app/p#…` QR can open the solstone mobile app
+scanning a `https://go.solstone.app/p#…` QR can open the solstone app
 when it is installed. Otherwise the fallback page links to the App Store or
 Play Store. After installing, the owner can open a valid pairing link.
 
@@ -237,6 +237,6 @@ After deploy, check:
 ## see also
 
 - [sol private link (spl)](https://github.com/solpbc/spl), the first consumer
-  of `go.solstone.app`, the pair-flow QR codes for solstone mobile.
+  of `go.solstone.app`, the pair-flow QR codes for the solstone app.
 - [sol pbc](https://solpbc.org), public benefit corporation operating these
   systems.

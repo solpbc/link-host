@@ -21,7 +21,7 @@ link.pair.solpbcopensourcethispagecollectsnothing = sol pbc · open source · no
 link.pair.solstoneappinstall = solstone.app/install
 link.pair.thislinkworksonceandonlyfora = this link works once, and only for a few minutes after your journal shows it.
 link.pair.thispagesaddressisyourpairinglink = this page's address is your pairing link. copy it from the address bar, open the solstone app on this computer, and paste it where it asks for one.
-link.pair.youopenedapairinglinkbutsolstonemobile = you opened a pairing link, but solstone mobile isn't installed yet. install it to finish.
+link.pair.youopenedapairinglinkbutsolstonemobile = you opened a pairing link, but the solstone app isn't installed yet. install it to finish.
 
 link.journal.title = open your journal
 
