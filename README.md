@@ -70,6 +70,8 @@ These are structural, not policy:
 2. **The pages set no cookies and run no analytics or third-party scripts.**
    The pairing and journal-link scripts are served from this origin. They copy
    the exact fragment into an explicit app-opening link and make no requests.
+   Inside Claude's desktop built-in browser, the journal-link page instead copies
+   the link to the clipboard when the owner clicks, and still makes no requests.
    CSP blocks scripted connection APIs.
 3. **Workers Logs is off.** `wrangler.toml` turns it off, invocation events
    included, and this source emits no application logs. That setting covers this
@@ -148,6 +150,12 @@ An explicit button opens `solstone://open#<token>` on iPhone, iPad and supported
 desktops. Android uses an `intent:` link for the phone package. The browser
 fallback stays visible beneath the button; installation help expands below it.
 The page cannot detect installation, app launch or journal reachability.
+
+Claude's desktop built-in browser doesn't open app links like `solstone:`, so
+the button can't work there. The page recognizes that browser by the
+`Claude/` token in its user agent and offers a copy button instead. It copies
+`https://go.solstone.app/j#<token>`, without any query, for the owner to paste
+into their usual browser.
 
 Both handoff scripts refresh their destination at load, `hashchange`,
 `pageshow`, and activation, so a reused browser pane cannot keep a previous

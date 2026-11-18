@@ -20,7 +20,11 @@ m6c696e6b2e6a6f75726e616c2e6174747269627574696f6e = Apple and the Apple logo are
 
 m6c696e6b2e6a6f75726e616c2e626f6479 = open this place in your journal with the solstone app.
 
+m6c696e6b2e6a6f75726e616c2e636f70696564 = copied
+
 m6c696e6b2e6a6f75726e616c2e636f7079616761696e = copy the full link from your chat and open it again.
+
+m6c696e6b2e6a6f75726e616c2e636f70796c696e6b = copy link
 
 m6c696e6b2e6a6f75726e616c2e66616c6c6261636b626f6479 = copy the full link from your chat into your usual browser, then try again.
 
@@ -41,6 +45,10 @@ m6c696e6b2e6a6f75726e616c2e696e76616c6964 = this journal link isn't valid
 m6c696e6b2e6a6f75726e616c2e6d697373696e67 = this link isn't complete
 
 m6c696e6b2e6a6f75726e616c2e6f70656e = open in the solstone app
+
+m6c696e6b2e6a6f75726e616c2e70616e65626f6479 = Claude's built-in browser can't open the solstone app. copy this link, then paste it into your usual browser.
+
+m6c696e6b2e6a6f75726e616c2e706173746568696e74 = now paste it into your usual browser's address bar.
 
 m6c696e6b2e6a6f75726e616c2e7469746c65 = open your journal
 

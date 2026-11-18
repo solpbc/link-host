@@ -1,0 +1,16 @@
+{
+  "description": "Status line after copying: where to paste the link.",
+  "context": "Journal-link handoff page, shown only inside Claude's built-in browser pane, which can't open the solstone app; the page offers to copy the link instead.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 72,
+  "source_revision": "6b9ffdbd2e7dba50b97df38236219810aff12c7baf49168caec1512818a84036",
+  "risk": "routine",
+  "auto_merge": true
+}

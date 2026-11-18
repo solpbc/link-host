@@ -62,9 +62,10 @@ A change that weakens any of them is the wrong change regardless of size:
   setting doesn't reach what Cloudflare's network records when it handles a
   request. Keep it separate from the HTTP fragment guarantee above. To debug,
   `wrangler tail` streams live and doesn't write to Workers Logs.
-- **No beaconing surface.** The only JavaScript is the desktop pairing page's
-  same-origin script, which copies the fragment into the button's `solstone:`
-  link and makes no requests. The pages' CSP blocks scripted connection APIs
+- **No beaconing surface.** The only JavaScript is the pairing and journal-link
+  pages' same-origin scripts. They copy the fragment into the button's
+  app-opening link, or, inside Claude's built-in browser, copy the full link to
+  the clipboard on a click, and make no requests. The pages' CSP blocks scripted connection APIs
   with `connect-src 'none'`. Never add analytics,
   telemetry, or a third-party script; the [sol pbc data covenants](https://solpbc.org)
   forbid them. No cookies, anywhere.

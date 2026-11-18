@@ -82,8 +82,20 @@ const MESSAGES = {
     arguments: [
     ],
   },
+  "link.journal.copied": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e636f70696564",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
   "link.journal.copyagain": {
     resourceKey: "m6c696e6b2e6a6f75726e616c2e636f7079616761696e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.copylink": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e636f70796c696e6b",
     formatIntent: "text",
     arguments: [
     ],
@@ -144,6 +156,18 @@ const MESSAGES = {
   },
   "link.journal.open": {
     resourceKey: "m6c696e6b2e6a6f75726e616c2e6f70656e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.panebody": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e70616e65626f6479",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.journal.pastehint": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e706173746568696e74",
     formatIntent: "text",
     arguments: [
     ],

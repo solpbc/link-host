@@ -115,3 +115,107 @@ describe("journal token boundary", () => {
 		expect(page(JOURNAL_SCRIPT, "", "#_valid").attrs.has("href")).toBe(false);
 	});
 });
+
+function copyPage(hash: string, clipboard?: { writeText(text: string): Promise<void> }) {
+	const listeners = new Map<string, () => void>();
+	let onCopy: (() => void) | undefined;
+	const copy = {
+		textContent: "label",
+		hidden: false,
+		getAttribute: (key: string) => (key === "data-copied" ? "done" : null),
+		addEventListener: (event: string, fn: () => void) => {
+			if (event === "click") onCopy = fn;
+		},
+	};
+	const copied = {
+		textContent: "",
+		getAttribute: (key: string) => (key === "data-text" ? "paste" : null),
+	};
+	const section = () => ({ hidden: false, querySelector: () => ({ textContent: "heading" }) });
+	const elements: Record<string, unknown> = {
+		"copy-link": copy,
+		copied,
+		ready: section(),
+		missing: section(),
+		invalid: section(),
+	};
+	const location = {
+		hash,
+		origin: "https://go.solstone.app",
+		pathname: "/j",
+		search: "?utm_source=x",
+	};
+	const document = {
+		title: "",
+		body: { appendChild: () => undefined },
+		getElementById: (id: string) => elements[id],
+		querySelector: () => ({ getAttribute: () => "copy" }),
+	};
+	new Function("window", "document", "location", JOURNAL_SCRIPT)(
+		{
+			addEventListener: (event: string, fn: () => void) => listeners.set(event, fn),
+			navigator: { clipboard },
+		},
+		document,
+		location,
+	);
+	return {
+		copy,
+		copied,
+		location,
+		elements,
+		click: () => onCopy?.(),
+		event: (n: string) => listeners.get(n)?.(),
+	};
+}
+
+describe("journal copy handoff in Claude's built-in browser", () => {
+	it("copies the canonical link, without any query, and confirms", async () => {
+		const written: string[] = [];
+		const p = copyPage("#_tok~123456", {
+			writeText: async (text) => {
+				written.push(text);
+			},
+		});
+		p.click();
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(written).toEqual(["https://go.solstone.app/j#_tok~123456"]);
+		expect(p.copy.textContent).toBe("done");
+		expect(p.copied.textContent).toBe("paste");
+	});
+
+	it("resets the confirmation when a reused pane receives another link", async () => {
+		const written: string[] = [];
+		const p = copyPage("#_first", {
+			writeText: async (text) => {
+				written.push(text);
+			},
+		});
+		p.click();
+		await Promise.resolve();
+		await Promise.resolve();
+		p.location.hash = "#_second";
+		p.event("hashchange");
+		expect(p.copy.textContent).toBe("label");
+		expect(p.copied.textContent).toBe("");
+		p.click();
+		await Promise.resolve();
+		expect(written).toEqual([
+			"https://go.solstone.app/j#_first",
+			"https://go.solstone.app/j#_second",
+		]);
+	});
+
+	it("copies nothing for a malformed link", () => {
+		const written: string[] = [];
+		const p = copyPage("#A/B", {
+			writeText: async (text) => {
+				written.push(text);
+			},
+		});
+		p.click();
+		expect(written).toEqual([]);
+		expect((p.elements.ready as { hidden: boolean }).hidden).toBe(true);
+	});
+});

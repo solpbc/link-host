@@ -1,0 +1,16 @@
+{
+  "description": "The copy button's label after the link was copied.",
+  "context": "Journal-link handoff page, shown only inside Claude's built-in browser pane, which can't open the solstone app; the page offers to copy the link instead.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 24,
+  "source_revision": "67f81d3c65b9266a733b33fe06fe735f692604bb5d79bc206e555902e6dd785e",
+  "risk": "routine",
+  "auto_merge": true
+}

@@ -139,6 +139,28 @@ describe("link-host Worker", () => {
 		expect(script).not.toMatch(/fetch|XMLHttpRequest|sendBeacon|cookie|localStorage/);
 	});
 
+	it("offers a copy button instead of the app button inside Claude's built-in browser", async () => {
+		const claude =
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/2.31226.1 Chrome/152.0.7977.130 Safari/537.36";
+		const res = await get("https://go.solstone.app/j", { headers: { "User-Agent": claude } });
+		expect(res.headers.get("Vary")).toBe("User-Agent");
+		const pane = await res.text();
+		expect(pane).toContain('data-target="copy"');
+		expect(pane).toMatch(
+			/<button class="primary" id="copy-link" type="button" data-copied="[^"]+">/,
+		);
+		expect(pane).toMatch(/<p class="copied" id="copied" role="status" data-text="[^"]+"><\/p>/);
+		expect(pane).not.toContain('id="open-app"');
+		const safari = await (
+			await get("https://go.solstone.app/j", {
+				headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) Safari/605.1.15" },
+			})
+		).text();
+		expect(safari).toContain('data-target="scheme"');
+		expect(safari).toContain('id="open-app"');
+		expect(safari).not.toContain('id="copy-link"');
+	});
+
 	it("tells a desktop to paste the link and keeps the phone stores second", async () => {
 		const desktop = await (
 			await get("https://go.solstone.app/p", {

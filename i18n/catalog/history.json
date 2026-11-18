@@ -140,8 +140,32 @@
       "selector": null
     },
     {
+      "id": "link.journal.copied",
+      "resource": "m6c696e6b2e6a6f75726e616c2e636f70696564",
+      "namespace": "link.journal",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
       "id": "link.journal.copyagain",
       "resource": "m6c696e6b2e6a6f75726e616c2e636f7079616761696e",
+      "namespace": "link.journal",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.journal.copylink",
+      "resource": "m6c696e6b2e6a6f75726e616c2e636f70796c696e6b",
       "namespace": "link.journal",
       "owner": "link-host",
       "tombstone": false,
@@ -262,6 +286,30 @@
     {
       "id": "link.journal.open",
       "resource": "m6c696e6b2e6a6f75726e616c2e6f70656e",
+      "namespace": "link.journal",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.journal.panebody",
+      "resource": "m6c696e6b2e6a6f75726e616c2e70616e65626f6479",
+      "namespace": "link.journal",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.journal.pastehint",
+      "resource": "m6c696e6b2e6a6f75726e616c2e706173746568696e74",
       "namespace": "link.journal",
       "owner": "link-host",
       "tombstone": false,

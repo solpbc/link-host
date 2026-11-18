@@ -7,7 +7,23 @@ import { JOURNAL_TOKENS } from "./journal-tokens";
 export function renderJournal(userAgent: string): string {
 	const android = /android/i.test(userAgent);
 	const supported = android || /iphone|ipad|ipod|macintosh|windows|linux/i.test(userAgent);
-	const target = /cros/i.test(userAgent) || !supported ? "" : android ? "android" : "scheme";
+	// Claude desktop's built-in browser pane names itself in its user agent and
+	// refuses every non-web link, so the app button can never work there.
+	const pane = / Claude\/\d/.test(userAgent);
+	const target = pane
+		? "copy"
+		: /cros/i.test(userAgent) || !supported
+			? ""
+			: android
+				? "android"
+				: "scheme";
+	const handoff = pane
+		? `<p class="intro">${t("link.journal.panebody")}</p>
+<button class="primary" id="copy-link" type="button" data-copied="${t("link.journal.copied")}">${t("link.journal.copylink")}</button>
+<p class="copied" id="copied" role="status" data-text="${t("link.journal.pastehint")}"></p>`
+		: `<p class="intro">${t("link.journal.body")}</p>
+<a class="primary" id="open-app">${t("link.journal.open")}</a>
+<section class="recovery"><h2>${t("link.journal.fallbacktitle")}</h2><p>${t("link.journal.fallbackbody")}</p></section>`;
 	return `<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -22,10 +38,10 @@ h1{font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1.
 h2,summary{font-size:16px;font-weight:600;line-height:1.5}h2{margin:0 0 6px}p{margin:0 0 20px}
 .intro{color:var(--ink-soft);font-size:17px;line-height:1.6;margin-bottom:28px}
 .primary{display:flex;align-items:center;justify-content:center;min-height:52px;padding:12px 18px;border-radius:var(--radius-sm);background:var(--ink);color:var(--paper);text-decoration:none;font-weight:600;text-align:center}
-.primary:hover{opacity:.88}.recovery{margin:32px 0 0}.recovery p{margin-bottom:0;color:var(--ink-soft)}
+button.primary{width:100%;border:0;font:inherit;font-weight:600;cursor:pointer}.copied{margin:16px 0 0;color:var(--ink-soft)}.copied:empty{display:none}.primary:hover{opacity:.88}.recovery{margin:32px 0 0}.recovery p{margin-bottom:0;color:var(--ink-soft)}
 details{margin-top:24px;padding-top:20px;border-top:1px solid var(--hairline)}summary{min-height:44px;padding:8px 0;cursor:pointer}
 details p{margin:10px 0 20px;color:var(--ink-soft)}a{color:inherit;text-underline-offset:3px}
-a:focus-visible,summary:focus-visible{outline:3px solid var(--orange-ink);outline-offset:4px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--orange-ink);outline-offset:4px}
 .badges{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:18px 0 16px}.badges a{display:flex;align-items:center;min-height:48px}.badges img{height:40px;width:auto;max-width:100%}
 .install-link{display:inline-block;min-height:44px;padding:8px 0}.attribution{font-size:12px;line-height:1.6;margin-top:20px}
 footer{font-size:12px;margin-top:48px;color:var(--ink-soft)}
@@ -34,9 +50,7 @@ footer{font-size:12px;margin-top:48px;color:var(--ink-soft)}
 </style></head><body><div class="stage">
 <main data-target="${target}">
 <section id="ready" hidden>
-<h1>${t("link.journal.title")}</h1><p class="intro">${t("link.journal.body")}</p>
-<a class="primary" id="open-app">${t("link.journal.open")}</a>
-<section class="recovery"><h2>${t("link.journal.fallbacktitle")}</h2><p>${t("link.journal.fallbackbody")}</p></section>
+<h1>${t("link.journal.title")}</h1>${handoff}
 <details><summary>${t("link.journal.installtitle")}</summary><p>${t("link.journal.installbody")}</p>
 <div class="badges">
 <a href="https://apps.apple.com/app/id6776850664"><img src="/j-assets/badge-app-store.svg" alt="${t("link.journal.applebadge")}" height="40"></a>
@@ -51,9 +65,14 @@ footer{font-size:12px;margin-top:48px;color:var(--ink-soft)}
 }
 
 // Only reads the browser's fragment. Never decode, re-encode or transmit it.
+// Inside Claude's pane the page copies the link to the owner's clipboard on
+// their click; it still makes no requests.
 export const JOURNAL_SCRIPT = `(function () {
 	var main = document.querySelector("main");
 	var link = document.getElementById("open-app");
+	var copy = document.getElementById("copy-link");
+	var copied = document.getElementById("copied");
+	var copyLabel = copy ? copy.textContent : "";
 	var ready = document.getElementById("ready");
 	var missing = document.getElementById("missing");
 	var invalid = document.getElementById("invalid");
@@ -64,24 +83,57 @@ export const JOURNAL_SCRIPT = `(function () {
 		missing.hidden = token.length !== 0;
 		invalid.hidden = !token || valid;
 		var target = main.getAttribute("data-target");
-		link.hidden = !valid || !target;
-		if (valid && target) {
-			link.setAttribute("href", target === "android"
-				? "intent://go.solstone.app/j#" + token + "#Intent;scheme=https;package=app.solstone.observer.phone;end"
-				: "solstone://open#" + token);
-		} else link.removeAttribute("href");
+		if (link) {
+			link.hidden = !valid || !target;
+			if (valid && target) {
+				link.setAttribute("href", target === "android"
+					? "intent://go.solstone.app/j#" + token + "#Intent;scheme=https;package=app.solstone.observer.phone;end"
+					: "solstone://open#" + token);
+			} else link.removeAttribute("href");
+		}
 		document.title = (valid ? ready : token ? invalid : missing).querySelector("h1").textContent;
 		return valid && Boolean(target);
 	}
+	function reset() {
+		if (!copy) return;
+		copy.textContent = copyLabel;
+		copied.textContent = "";
+	}
 	refresh();
-	window.addEventListener("hashchange", refresh);
+	window.addEventListener("hashchange", function () {
+		reset();
+		refresh();
+	});
 	window.addEventListener("pageshow", refresh);
-	link.addEventListener("click", function (event) {
-		if (!refresh()) event.preventDefault();
-	});
-	link.addEventListener("auxclick", function (event) {
-		if (!refresh()) event.preventDefault();
-	});
-	link.addEventListener("contextmenu", refresh);
+	if (link) {
+		link.addEventListener("click", function (event) {
+			if (!refresh()) event.preventDefault();
+		});
+		link.addEventListener("auxclick", function (event) {
+			if (!refresh()) event.preventDefault();
+		});
+		link.addEventListener("contextmenu", refresh);
+	}
+	if (copy) {
+		copy.addEventListener("click", function () {
+			if (!refresh()) return;
+			var full = location.origin + location.pathname + "#" + location.hash.slice(1);
+			function done() {
+				copy.textContent = copy.getAttribute("data-copied");
+				copied.textContent = copied.getAttribute("data-text");
+			}
+			function fallback() {
+				var area = document.createElement("textarea");
+				area.value = full;
+				document.body.appendChild(area);
+				area.select();
+				if (document.execCommand("copy")) done();
+				area.remove();
+			}
+			var clipboard = window.navigator && window.navigator.clipboard;
+			if (clipboard && clipboard.writeText) clipboard.writeText(full).then(done, fallback);
+			else fallback();
+		});
+	}
 })();
 `;

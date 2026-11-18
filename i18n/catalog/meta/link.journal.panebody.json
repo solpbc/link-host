@@ -1,0 +1,16 @@
+{
+  "description": "Why the app can't open here, and what to do instead.",
+  "context": "Journal-link handoff page, shown only inside Claude's built-in browser pane, which can't open the solstone app; the page offers to copy the link instead.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 120,
+  "source_revision": "a381c1b4a4b0fa70a10870c6ca3ead166c3a60c1bbf580aff83093a48e195966",
+  "risk": "routine",
+  "auto_merge": true
+}

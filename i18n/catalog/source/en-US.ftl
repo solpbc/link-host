@@ -33,6 +33,14 @@ link.journal.fallbacktitle = app didn't open?
 
 link.journal.fallbackbody = copy the full link from your chat into your usual browser, then try again.
 
+link.journal.panebody = Claude's built-in browser can't open the solstone app. copy this link, then paste it into your usual browser.
+
+link.journal.copylink = copy link
+
+link.journal.copied = copied
+
+link.journal.pastehint = now paste it into your usual browser's address bar.
+
 link.journal.installtitle = need the solstone app?
 
 link.journal.installbody = install it, then open this link again.
