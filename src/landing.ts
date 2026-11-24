@@ -20,28 +20,10 @@
 // the authoritative copy lives in the private product spec for this host,
 // §literal copy. Brand iterates via PR + manual deploy.
 
-import { t } from "./i18n";
+import { SOURCE_LOCALE, htmlLang, t } from "./i18n";
 
-const H1 = t("link.pair.finishpairingyourphonewithyourjournal");
-const SUB = t("link.pair.youopenedapairinglinkbutsolstonemobile");
-const CTA_IOS = t("link.pair.getsolstoneforiphone");
-const CTA_ANDROID = t("link.pair.getsolstoneforandroid");
-const FOOTER = t("link.pair.solpbcopensourcethispagecollectsnothing");
-
-// A desktop has no app to hand the link to automatically, so the page asks
-// for a paste. The link is this page's own address: the pairing secret sits
-// in the fragment, which the browser keeps and never sends to this server.
-const DESKTOP_H1 = t("link.pair.pairthiscomputerwithyourjournal");
-const DESKTOP_SUB = t("link.pair.thispagesaddressisyourpairinglink");
-const DESKTOP_OPEN_APP = t("link.pair.openinthesolstoneapp");
-const DESKTOP_OPEN_APP_OR = t("link.pair.orpasteitinyourself");
-const DESKTOP_LINUX = t("link.pair.onlinuxyoucanalsosaveitas");
 const DESKTOP_LINUX_COMMAND =
 	"systemctl --user stop solstone-linux\nsolstone-linux setup < pairing-link.txt\nsystemctl --user start solstone-linux";
-const DESKTOP_EXPIRY = t("link.pair.thislinkworksonceandonlyfora");
-const DESKTOP_GET_APP = t("link.pair.donthavethesolstoneapponthis");
-const DESKTOP_GET_APP_LINK = t("link.pair.solstoneappinstall");
-const DESKTOP_PHONE = t("link.pair.pairingaphoneinstead");
 const INSTALL_URL = "https://solstone.app/install";
 
 // Store URLs, the same listings solstone.app/mobile links. The App Store
@@ -67,53 +49,55 @@ function detectPlatform(userAgent: string): Platform {
 	return "desktop";
 }
 
-export function renderLanding(userAgent: string): string {
+export function renderLanding(userAgent: string, locale: string = SOURCE_LOCALE): string {
 	const platform = detectPlatform(userAgent);
 	if (platform === "desktop" || platform === "chromeos")
-		return renderDesktop(platform === "desktop");
+		return renderDesktop(platform === "desktop", locale);
 	const iosFirst = platform !== "android";
-	const iosButton = `<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>`;
-	const androidButton = `<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>`;
+	const iosButton = `<a class="cta cta-ios" href="${IOS_STORE_URL}">${t("link.pair.getsolstoneforiphone", locale)}</a>`;
+	const androidButton = `<a class="cta cta-android" href="${ANDROID_STORE_URL}">${t("link.pair.getsolstoneforandroid", locale)}</a>`;
 	const buttons = iosFirst
 		? `${iosButton}\n\t\t\t${androidButton}`
 		: `${androidButton}\n\t\t\t${iosButton}`;
 
 	return page(
-		t("link.pair.finishpairinggosolstoneapp"),
-		`<h1>${H1}</h1>
-		<p class="sub">${SUB}</p>
+		t("link.pair.finishpairinggosolstoneapp", locale),
+		`<h1>${t("link.pair.finishpairingyourphonewithyourjournal", locale)}</h1>
+		<p class="sub">${t("link.pair.youopenedapairinglinkbutsolstonemobile", locale)}</p>
 		<div class="ctas">
 			${buttons}
 		</div>`,
+		locale,
 	);
 }
 
 // The store buttons stay on the desktop page, second: an iPad's Safari
 // reports a desktop user agent, and an iPad without the app lands here.
-function renderDesktop(offerOpenApp: boolean): string {
+function renderDesktop(offerOpenApp: boolean, locale: string): string {
 	// Mac, windows and linux get the open-in-app button; the script reveals it
 	// only when the page carries a pairing fragment. The paste instructions stay
 	// beside it, since a browser can't tell whether the app is installed.
 	const openApp = offerOpenApp
 		? `<div id="open-app-block" hidden>
-			<div class="ctas"><a class="cta" id="open-app" href="#">${DESKTOP_OPEN_APP}</a></div>
-			<p class="note">${DESKTOP_OPEN_APP_OR}</p>
+			<div class="ctas"><a class="cta" id="open-app" href="#">${t("link.pair.openinthesolstoneapp", locale)}</a></div>
+			<p class="note">${t("link.pair.orpasteitinyourself", locale)}</p>
 		</div>
 		`
 		: "";
 	return page(
-		t("link.pair.pairadevicegosolstoneapp"),
-		`<h1>${DESKTOP_H1}</h1>
-		${openApp}<p class="sub">${DESKTOP_SUB}</p>
-		<p class="note">${DESKTOP_LINUX}</p>
+		t("link.pair.pairadevicegosolstoneapp", locale),
+		`<h1>${t("link.pair.pairthiscomputerwithyourjournal", locale)}</h1>
+		${openApp}<p class="sub">${t("link.pair.thispagesaddressisyourpairinglink", locale)}</p>
+		<p class="note">${t("link.pair.onlinuxyoucanalsosaveitas", locale)}</p>
 		<pre class="command">${DESKTOP_LINUX_COMMAND.replace("<", "&lt;")}</pre>
-		<p class="note">${DESKTOP_EXPIRY}</p>
-		<p class="note">${DESKTOP_GET_APP} <a href="${INSTALL_URL}">${DESKTOP_GET_APP_LINK}</a></p>
-		<p class="note phone">${DESKTOP_PHONE}</p>
+		<p class="note">${t("link.pair.thislinkworksonceandonlyfora", locale)}</p>
+		<p class="note">${t("link.pair.donthavethesolstoneapponthis", locale)} <a href="${INSTALL_URL}">${t("link.pair.solstoneappinstall", locale)}</a></p>
+		<p class="note phone">${t("link.pair.pairingaphoneinstead", locale)}</p>
 		<div class="ctas secondary">
-			<a class="cta cta-ios" href="${IOS_STORE_URL}">${CTA_IOS}</a>
-			<a class="cta cta-android" href="${ANDROID_STORE_URL}">${CTA_ANDROID}</a>
+			<a class="cta cta-ios" href="${IOS_STORE_URL}">${t("link.pair.getsolstoneforiphone", locale)}</a>
+			<a class="cta cta-android" href="${ANDROID_STORE_URL}">${t("link.pair.getsolstoneforandroid", locale)}</a>
 		</div>${offerOpenApp ? '\n\t\t<script src="/p.js" defer></script>' : ""}`,
+		locale,
 	);
 }
 
@@ -145,9 +129,9 @@ export const DESKTOP_SCRIPT = `(function () {
 })();
 `;
 
-function page(title: string, body: string): string {
+function page(title: string, body: string, locale: string): string {
 	return `<!doctype html>
-<html lang="en">
+<html lang="${htmlLang(locale)}">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -263,7 +247,7 @@ function page(title: string, body: string): string {
 <body>
 	<main>
 		${body}
-		<footer>${FOOTER}</footer>
+		<footer>${t("link.pair.solpbcopensourcethispagecollectsnothing", locale)}</footer>
 	</main>
 </body>
 </html>

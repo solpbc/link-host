@@ -5,25 +5,25 @@
 // hostnames into a browser directly. Structural, not promotional. CMO-owned
 // copy slots. Strict CSP; no analytics, no cookies, no third-party scripts.
 
-import { t } from "./i18n";
-
-const BODY = t("link.host.thisissolpbcsuniversalapphandoff");
-const FOOTER = t("link.host.operatedbysolpbc");
+import { SOURCE_LOCALE, htmlLang, t } from "./i18n";
 
 const REPO_URL = "https://github.com/solpbc/link-host";
 const SOLPBC_URL = "https://solpbc.org";
 
-export function renderIndex(host: string): string {
+export function renderIndex(host: string, locale: string = SOURCE_LOCALE): string {
 	// Linkify the github reference inline; leave the rest of the body as
 	// plain text. We deliberately keep this page minimal — it exists for
 	// people who type the bare hostname, not for marketing.
-	const linkedBody = BODY.replace(
+	const linkedBody = t("link.host.thisissolpbcsuniversalapphandoff", locale).replace(
 		"github.com/solpbc/link-host",
 		`<a href="${REPO_URL}">github.com/solpbc/link-host</a>`,
 	);
-	const linkedFooter = FOOTER.replace("sol pbc", `<a href="${SOLPBC_URL}">sol pbc</a>`);
+	const linkedFooter = t("link.host.operatedbysolpbc", locale).replace(
+		"sol pbc",
+		`<a href="${SOLPBC_URL}">sol pbc</a>`,
+	);
 	return `<!doctype html>
-<html lang="en">
+<html lang="${htmlLang(locale)}">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">

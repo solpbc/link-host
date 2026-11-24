@@ -8,3 +8,7 @@ declare module "*/i18n/generated/esm/link-host/api.mjs" {
 		args?: readonly (readonly [string, unknown])[],
 	): string;
 }
+
+declare module "*/i18n/generated/esm/link-host/catalogs.mjs" {
+	export const CATALOGS: Record<string, string>;
+}

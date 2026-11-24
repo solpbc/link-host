@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 sol pbc
 
-import { t } from "./i18n";
+import { SOURCE_LOCALE, htmlLang, t } from "./i18n";
 import { JOURNAL_TOKENS } from "./journal-tokens";
 
-export function renderJournal(userAgent: string): string {
+export function renderJournal(userAgent: string, locale: string = SOURCE_LOCALE): string {
 	const android = /android/i.test(userAgent);
 	const supported = android || /iphone|ipad|ipod|macintosh|windows|linux/i.test(userAgent);
 	// Claude desktop's built-in browser pane names itself in its user agent and
@@ -18,17 +18,17 @@ export function renderJournal(userAgent: string): string {
 				? "android"
 				: "scheme";
 	const handoff = pane
-		? `<p class="intro">${t("link.journal.panebody")}</p>
-<button class="primary" id="copy-link" type="button" data-copied="${t("link.journal.copied")}">${t("link.journal.copylink")}</button>
-<p class="copied" id="copied" role="status" data-text="${t("link.journal.pastehint")}"></p>`
-		: `<p class="intro">${t("link.journal.body")}</p>
-<a class="primary" id="open-app">${t("link.journal.open")}</a>
-<section class="recovery"><h2>${t("link.journal.fallbacktitle")}</h2><p>${t("link.journal.fallbackbody")}</p></section>`;
+		? `<p class="intro">${t("link.journal.panebody", locale)}</p>
+<button class="primary" id="copy-link" type="button" data-copied="${t("link.journal.copied", locale)}">${t("link.journal.copylink", locale)}</button>
+<p class="copied" id="copied" role="status" data-text="${t("link.journal.pastehint", locale)}"></p>`
+		: `<p class="intro">${t("link.journal.body", locale)}</p>
+<a class="primary" id="open-app">${t("link.journal.open", locale)}</a>
+<section class="recovery"><h2>${t("link.journal.fallbacktitle", locale)}</h2><p>${t("link.journal.fallbackbody", locale)}</p></section>`;
 	return `<!doctype html>
-<html lang="en"><head>
+<html lang="${htmlLang(locale)}"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light dark">
-<title>${t("link.journal.title")}</title>
+<title>${t("link.journal.title", locale)}</title>
 <style>${JOURNAL_TOKENS}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:var(--cream-bright);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55}
@@ -50,17 +50,17 @@ footer{font-size:12px;margin-top:48px;color:var(--ink-soft)}
 </style></head><body><div class="stage">
 <main data-target="${target}">
 <section id="ready" hidden>
-<h1>${t("link.journal.title")}</h1>${handoff}
-<details><summary>${t("link.journal.installtitle")}</summary><p>${t("link.journal.installbody")}</p>
+<h1>${t("link.journal.title", locale)}</h1>${handoff}
+<details><summary>${t("link.journal.installtitle", locale)}</summary><p>${t("link.journal.installbody", locale)}</p>
 <div class="badges">
-<a href="https://apps.apple.com/app/id6776850664"><img src="/j-assets/badge-app-store.svg" alt="${t("link.journal.applebadge")}" height="40"></a>
-<a href="https://play.google.com/store/apps/details?id=app.solstone.observer.phone"><img src="/j-assets/badge-google-play.png" alt="${t("link.journal.googlebadge")}" height="40"></a>
-</div><a class="install-link" href="https://solstone.app/install">${t("link.journal.installdesktop")}</a>
-<p class="attribution">${t("link.journal.attribution")}</p></details>
+<a href="https://apps.apple.com/app/id6776850664"><img src="/j-assets/badge-app-store.svg" alt="${t("link.journal.applebadge", locale)}" height="40"></a>
+<a href="https://play.google.com/store/apps/details?id=app.solstone.observer.phone"><img src="/j-assets/badge-google-play.png" alt="${t("link.journal.googlebadge", locale)}" height="40"></a>
+</div><a class="install-link" href="https://solstone.app/install">${t("link.journal.installdesktop", locale)}</a>
+<p class="attribution">${t("link.journal.attribution", locale)}</p></details>
 </section>
-<section id="missing"><h1>${t("link.journal.missing")}</h1><p>${t("link.journal.copyagain")}</p></section>
-<section id="invalid" hidden><h1>${t("link.journal.invalid")}</h1><p>${t("link.journal.copyagain")}</p></section>
-</main><footer><a href="https://github.com/solpbc/link-host">${t("link.journal.footer")}</a></footer>
+<section id="missing"><h1>${t("link.journal.missing", locale)}</h1><p>${t("link.journal.copyagain", locale)}</p></section>
+<section id="invalid" hidden><h1>${t("link.journal.invalid", locale)}</h1><p>${t("link.journal.copyagain", locale)}</p></section>
+</main><footer><a href="https://github.com/solpbc/link-host">${t("link.journal.footer", locale)}</a></footer>
 </div><script src="/j.js" defer></script></body></html>`;
 }
 

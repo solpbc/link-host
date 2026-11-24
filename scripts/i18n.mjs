@@ -10,13 +10,28 @@ const compiler = process.env.I18N_COMPILER;
 if (!compiler) {
   throw new Error("Set I18N_COMPILER to the pinned i18n-catalog binary; see i18n/README.md");
 }
+const args = process.argv.slice(2);
+let channel = "production";
+for (let i = 0; i < args.length; i += 1) {
+  if (args[i] === "--channel" && i + 1 < args.length) {
+    channel = args[i + 1];
+    i += 1;
+  } else {
+    throw new Error(`Unknown argument: ${args[i]}`);
+  }
+}
+if (channel !== "production" && channel !== "development") {
+  throw new Error(`Unsupported channel: ${channel}`);
+}
+const extra = channel === "development" ? ["--fallback-stale"] : [];
 execFileSync(
   compiler,
   [
     "targets",
     path.join(root, "i18n/catalog"),
     "--channel",
-    "production",
+    channel,
+    ...extra,
     "--target",
     "esm",
     "--out",
@@ -24,4 +39,6 @@ execFileSync(
   ],
   { stdio: "inherit" },
 );
-writeSnapshot(root);
+if (channel === "production") {
+  writeSnapshot(root);
+}

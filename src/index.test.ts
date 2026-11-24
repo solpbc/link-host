@@ -6,7 +6,7 @@ import SOURCE_FTL from "../i18n/catalog/source/en-US.ftl?raw";
 import CASES from "../i18n/generated/cases.json";
 import WRANGLER_TOML from "../wrangler.toml?raw";
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
-import { MESSAGE_IDS, t } from "./i18n";
+import { MESSAGE_IDS, resolveLocale, t } from "./i18n";
 import worker from "./index";
 
 const HTML_CSP =
@@ -310,7 +310,7 @@ describe("link-host Worker", () => {
 
 	it("keeps the i18n catalog, generated ESM bundle, and MessageId table in sync", () => {
 		const ftlKeys = [...SOURCE_FTL.matchAll(/^([a-z0-9_.]+)\s*=/gm)].map((m) => m[1]).sort();
-		const caseKeys = CASES.cases.map((c) => c.message_id).sort();
+		const caseKeys = [...new Set(CASES.cases.map((c) => c.message_id))].sort();
 		const idKeys = [...MESSAGE_IDS].sort();
 
 		expect(idKeys).toEqual(ftlKeys);
@@ -321,5 +321,13 @@ describe("link-host Worker", () => {
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).not.toMatch(/[\u2068\u2069]/);
 		}
+	});
+
+	it("negotiates packaged locales from Accept-Language and stays English in production", () => {
+		expect(resolveLocale("es-419,en;q=0.8", ["en-US"])).toBe("en-US");
+		expect(resolveLocale("es-419,en;q=0.8", ["en-US", "es-419"])).toBe("es-419");
+		expect(resolveLocale("es-MX,es;q=0.9", ["en-US", "es-419"])).toBe("es-419");
+		expect(resolveLocale("es", ["en-US", "es-419"])).toBe("es-419");
+		expect(resolveLocale("fr-FR", ["en-US", "es-419"])).toBe("en-US");
 	});
 });

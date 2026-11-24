@@ -2,8 +2,46 @@
 // Copyright (c) 2026 sol pbc
 
 import { render } from "../i18n/generated/esm/link-host/api.mjs";
+import { CATALOGS } from "../i18n/generated/esm/link-host/catalogs.mjs";
 
 export const SOURCE_LOCALE = "en-US";
+export const PACKAGED_LOCALES: readonly string[] = Object.keys(CATALOGS);
+
+export function resolveLocale(
+	acceptLanguage: string | null | undefined,
+	packaged: readonly string[] = PACKAGED_LOCALES,
+): string {
+	if (!acceptLanguage || packaged.length <= 1) return SOURCE_LOCALE;
+	const entries = acceptLanguage
+		.split(",")
+		.map((part, index) => {
+			const [rawTag, ...params] = part.trim().split(";");
+			let q = 1;
+			for (const param of params) {
+				const trimmed = param.trim();
+				if (trimmed.startsWith("q=")) {
+					const parsed = Number.parseFloat(trimmed.slice(2));
+					if (Number.isFinite(parsed)) q = parsed;
+				}
+			}
+			return { tag: rawTag.trim().toLowerCase(), q, index };
+		})
+		.filter((entry) => entry.tag.length > 0 && entry.q > 0)
+		.sort((a, b) => b.q - a.q || a.index - b.index);
+
+	for (const { tag } of entries) {
+		const exact = packaged.find((loc) => loc.toLowerCase() === tag);
+		if (exact) return exact;
+		const primary = tag.split("-")[0];
+		const byPrimary = packaged.find((loc) => loc.toLowerCase().split("-")[0] === primary);
+		if (byPrimary) return byPrimary;
+	}
+	return SOURCE_LOCALE;
+}
+
+export function htmlLang(locale: string): string {
+	return locale === SOURCE_LOCALE ? "en" : locale;
+}
 
 export const MESSAGE_IDS = [
 	"link.journal.title",
@@ -63,6 +101,6 @@ export type MessageId = (typeof MESSAGE_IDS)[number];
  * stripping those marks preserves the exact literal slot bytes in `<title>` and
  * body text.
  */
-export function t(id: MessageId): string {
-	return render(SOURCE_LOCALE, id).replace(/[\u2068\u2069]/g, "");
+export function t(id: MessageId, locale: string = SOURCE_LOCALE): string {
+	return render(locale, id).replace(/[\u2068\u2069]/g, "");
 }

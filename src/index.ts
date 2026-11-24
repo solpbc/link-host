@@ -35,7 +35,7 @@
 
 import { EXTRO_AASA, SOLSTONE_AASA } from "./aasa";
 import { ASSETLINKS } from "./assetlinks";
-import { t } from "./i18n";
+import { PACKAGED_LOCALES, resolveLocale, t } from "./i18n";
 import { renderIndex } from "./index-page";
 import { JOURNAL_SCRIPT, renderJournal } from "./journal";
 import { JOURNAL_ASSETS } from "./journal-assets";
@@ -113,9 +113,9 @@ function textResponse(body: string, status = 200): Response {
 	});
 }
 
-function methodNotAllowed(): Response {
+function methodNotAllowed(locale: string): Response {
 	// 405 must include an Allow header per RFC 7231 §6.5.5.
-	return new Response(t("link.http.methodnotallowed"), {
+	return new Response(t("link.http.methodnotallowed", locale), {
 		status: 405,
 		headers: {
 			Allow: "GET, HEAD",
@@ -125,8 +125,8 @@ function methodNotAllowed(): Response {
 	});
 }
 
-function notFound(): Response {
-	return new Response(t("link.http.notfound"), {
+function notFound(locale: string): Response {
+	return new Response(t("link.http.notfound", locale), {
 		status: 404,
 		headers: {
 			"Content-Type": "text/plain; charset=utf-8",
@@ -139,12 +139,14 @@ export default {
 	async fetch(request: Request): Promise<Response> {
 		const url = new URL(request.url);
 		const method = request.method.toUpperCase();
+		const locale = resolveLocale(request.headers.get("Accept-Language"));
+		const varyLocale = PACKAGED_LOCALES.length > 1;
 
 		// Reject body-bearing / mutating methods up front. HEAD is allowed
 		// implicitly by passing through to GET handling; CF Workers handle
 		// HEAD by stripping the body from the GET response.
 		if (method !== "GET" && method !== "HEAD") {
-			return methodNotAllowed();
+			return methodNotAllowed(locale);
 		}
 
 		const host = url.hostname;
@@ -155,13 +157,13 @@ export default {
 		if (url.pathname === "/.well-known/apple-app-site-association") {
 			if (kind === "solstone") return jsonResponse(SOLSTONE_AASA);
 			if (kind === "extro") return jsonResponse(EXTRO_AASA);
-			return notFound();
+			return notFound(locale);
 		}
 
 		// Android assetlinks — App Links verification manifest.
 		if (url.pathname === "/.well-known/assetlinks.json") {
 			if (kind === "solstone") return jsonResponse(ASSETLINKS);
-			return notFound();
+			return notFound(locale);
 		}
 
 		// Install-fallback page. Only reached when iOS / Android did NOT
@@ -169,16 +171,20 @@ export default {
 		// server-side; we use it once to pick the primary CTA, then the
 		// header is gone.
 		if (url.pathname === "/p" || url.pathname === "/j") {
-			if (kind !== "solstone") return notFound();
+			if (kind !== "solstone") return notFound(locale);
 			const ua = request.headers.get("User-Agent") ?? "";
-			return htmlResponse(url.pathname === "/j" ? renderJournal(ua) : renderLanding(ua), 200, {
-				Vary: "User-Agent",
-			});
+			return htmlResponse(
+				url.pathname === "/j" ? renderJournal(ua, locale) : renderLanding(ua, locale),
+				200,
+				{
+					Vary: varyLocale ? "User-Agent, Accept-Language" : "User-Agent",
+				},
+			);
 		}
 
 		// The desktop landing page's one script (see `DESKTOP_SCRIPT`).
 		if (url.pathname === "/p.js" || url.pathname === "/j.js") {
-			if (kind !== "solstone") return notFound();
+			if (kind !== "solstone") return notFound(locale);
 			return new Response(url.pathname === "/j.js" ? JOURNAL_SCRIPT : DESKTOP_SCRIPT, {
 				status: 200,
 				headers: {
@@ -208,16 +214,21 @@ export default {
 		// Extro install-fallback page. Only reached when iOS did NOT match
 		// the URL against an installed extro-mobile app.
 		if (url.pathname === "/x/sync") {
-			if (kind !== "extro") return notFound();
-			return htmlResponse(renderExtroSync());
+			if (kind !== "extro") return notFound(locale);
+			return htmlResponse(
+				renderExtroSync(locale),
+				200,
+				varyLocale ? { Vary: "Accept-Language" } : {},
+			);
 		}
 
 		// Crawlable so a Disallow can never lock in a stale index entry, but
 		// tagged noindex — this host has nothing worth ranking, per the CMO
 		// indexability policy's tier-4 assignment for these hosts.
 		if (url.pathname === "/") {
-			return htmlResponse(renderIndex(host), 200, {
+			return htmlResponse(renderIndex(host, locale), 200, {
 				"X-Robots-Tag": "noindex",
+				...(varyLocale ? { Vary: "Accept-Language" } : {}),
 			});
 		}
 
@@ -225,6 +236,6 @@ export default {
 			return textResponse(ROBOTS);
 		}
 
-		return notFound();
+		return notFound(locale);
 	},
 } satisfies ExportedHandler;

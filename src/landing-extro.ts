@@ -3,20 +3,15 @@
 
 // Structurally mirrors src/landing.ts. When that file's scaffold changes (CSS, semantic HTML, CSP-relevant inline content), audit this file for parity.
 
-import { t } from "./i18n";
+import { SOURCE_LOCALE, htmlLang, t } from "./i18n";
 
-const TITLE = t("link.extro.openextrolinksolpbcorg");
-const H1 = t("link.extro.openextroonyourphone");
-const SUB = t("link.extro.thislinkwakesupextromobiletosync");
-const FOOTER = t("link.extro.solpbcopensourcethispagecollectsnothing");
-
-export function renderExtroSync(): string {
+export function renderExtroSync(locale: string = SOURCE_LOCALE): string {
 	return `<!doctype html>
-<html lang="en">
+<html lang="${htmlLang(locale)}">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>${TITLE}</title>
+	<title>${t("link.extro.openextrolinksolpbcorg", locale)}</title>
 	<meta name="robots" content="noindex, nofollow">
 	<style>
 		:root { --bg: #fbfaf6; --fg: #1a1a1a; --muted: #5a5a5a; }
@@ -45,9 +40,9 @@ export function renderExtroSync(): string {
 </head>
 <body>
 	<main>
-		<h1>${H1}</h1>
-		<p class="sub">${SUB}</p>
-		<footer>${FOOTER}</footer>
+		<h1>${t("link.extro.openextroonyourphone", locale)}</h1>
+		<p class="sub">${t("link.extro.thislinkwakesupextromobiletosync", locale)}</p>
+		<footer>${t("link.extro.solpbcopensourcethispagecollectsnothing", locale)}</footer>
 	</main>
 </body>
 </html>
