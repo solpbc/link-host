@@ -62,7 +62,7 @@ link.pair.getsolstoneforandroid = solstone für Android holen
 
 link.pair.getsolstoneforiphone = solstone für iPhone holen
 
-link.pair.onlinuxyoucanalsosaveitas = unter Linux kannst du den Link auch als { $filename } speichern und dann ausführen:
+link.pair.onlinuxyoucanalsosaveitas = unter Linux kannst du den Link auch als { $filename } speichern und ausführen:
 
 link.pair.openinthesolstoneapp = in der solstone-App öffnen
 
