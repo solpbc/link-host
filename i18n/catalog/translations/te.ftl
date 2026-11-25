@@ -22,7 +22,7 @@ link.journal.body = solstone యాప్‌తో ఈ ప్రదేశాన�
 
 link.journal.copied = కాపీ అయింది
 
-link.journal.copyagain = మీ చాట్ నుండి పూర్తి లింక్‌ను కాపీ చేసి మళ్ళీ తెరవండి.
+link.journal.copyagain = మీ చాట్ నుండి పూర్తి లింక్ కాపీ చేసి మళ్ళీ తెరవండి.
 
 link.journal.copylink = లింక్ కాపీ చేయండి
 
@@ -50,7 +50,7 @@ link.journal.panebody = Claude అంతర్నిర్మిత బ్రౌ
 
 link.journal.pastehint = ఇప్పుడు దాన్ని మీ మామూలు బ్రౌజర్ చిరునామా పట్టీలో పేస్ట్ చేయండి.
 
-link.journal.title = మీ జర్నల్ తెరవండి
+link.journal.title = మీ జర్నల్‌ను తెరవండి
 
 link.pair.donthavethesolstoneapponthis = ఈ కంప్యూటర్‌లో solstone యాప్ ఇంకా లేదా?
 
