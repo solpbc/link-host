@@ -7,19 +7,16 @@
 // only if Apple changes it. The locked schema and the rationale live in
 // the private product spec for this host.
 //
-// Bundle ID is the sol pbc paid Apple Developer Program team (`7QCG8V4M6H`)
-// crossed with the minted `app.solstone.swift` bundle (ASC ID `MCH2T65ZQL`,
-// Push + App Groups capabilities provisioned). Confirmed 2026-05-10 by an
-// internal product decision; the canonical signing architecture is recorded
-// in sol pbc's internal Apple vendor notes.
-//
-// Split claims: the solstone payload (served on go.solstone.app) claims `/p` and `/j`
-// for the solstone spl pair-flow and carries
-// webcredentials. The extro payload (served on link.solpbc.org) claims
-// `/x/sync` and carries no webcredentials. Additional sol pbc apps add their
-// own blocks to the relevant host's `applinks.details` and their own paths.
+// Bundle IDs on sol pbc's Apple Developer Program team (`7QCG8V4M6H`):
+// - `app.solstone.swift` (iOS/iPadOS): claims `/p` and `/j` plus webcredentials.
+// - `app.solstone.observer` (macOS): claims `/j` only, keeping `/p` and
+//   webcredentials on `app.solstone.swift`.
+// - `org.solpbc.extro` (served on link.solpbc.org): claims `/x/sync` only.
+// Additional sol pbc apps add their own blocks to the relevant host's
+// `applinks.details` and their own paths.
 
 const SOLSTONE_APP_ID = "7QCG8V4M6H.app.solstone.swift";
+const SOLSTONE_MAC_APP_ID = "7QCG8V4M6H.app.solstone.observer";
 const EXTRO_APP_ID = "7QCG8V4M6H.org.solpbc.extro";
 
 export const SOLSTONE_AASA = {
@@ -28,6 +25,10 @@ export const SOLSTONE_AASA = {
 			{
 				appIDs: [SOLSTONE_APP_ID],
 				components: [{ "/": "/p" }, { "/": "/j" }],
+			},
+			{
+				appIDs: [SOLSTONE_MAC_APP_ID],
+				components: [{ "/": "/j" }],
 			},
 		],
 	},

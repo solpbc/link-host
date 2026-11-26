@@ -51,8 +51,10 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
   Rule of thumb: solstone pair QR → `go.solstone.app/p`; extro sync link →
   `link.solpbc.org/x/sync`; anything that enrolls, issues a token, or carries
   tunnel bytes → `link.solstone.app`. Never cross handoff with relay.
-- **Status:** solstone AASA carries the confirmed iOS value
-  (`7QCG8V4M6H.app.solstone.swift`, the paid Apple Developer team and app bundle).
+- **Status:** solstone AASA carries the iOS/iPadOS app
+  (`7QCG8V4M6H.app.solstone.swift`, claiming `/p`, `/j`, and `webcredentials`)
+  and the macOS app (`7QCG8V4M6H.app.solstone.observer`, claiming `/j` only; in
+  AASA, `/p` and `webcredentials` stay on `app.solstone.swift`).
   extro AASA carries `7QCG8V4M6H.org.solpbc.extro`.
   assetlinks on `go.solstone.app` claims the shipped Android phone package
   (`app.solstone.observer.phone`) with both the direct-release signing certificate

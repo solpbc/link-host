@@ -77,13 +77,17 @@ describe("link-host Worker", () => {
 			webcredentials?: { apps: string[] };
 		};
 		const solstoneAppId = SOLSTONE_AASA.applinks.details[0].appIDs[0];
+		const solstoneMacAppId = SOLSTONE_AASA.applinks.details[1].appIDs[0];
 		const extroAppId = EXTRO_AASA.applinks.details[0].appIDs[0];
 
 		expect(res.status).toBe(200);
 		expect(res.headers.get("Content-Type")).toBe("application/json");
 		expect(res.headers.get("Cache-Control")).toBe("public, max-age=3600");
-		expect(body.applinks.details[0].appIDs).toEqual([solstoneAppId]);
-		expect(body.applinks.details[0].components).toEqual([{ "/": "/p" }, { "/": "/j" }]);
+		expect(solstoneMacAppId).toBe("7QCG8V4M6H.app.solstone.observer");
+		expect(body.applinks.details).toEqual([
+			{ appIDs: [solstoneAppId], components: [{ "/": "/p" }, { "/": "/j" }] },
+			{ appIDs: [solstoneMacAppId], components: [{ "/": "/j" }] },
+		]);
 		expect(body.webcredentials?.apps).toEqual([solstoneAppId]);
 		expect(JSON.stringify(body)).not.toContain(extroAppId);
 	});
@@ -95,6 +99,7 @@ describe("link-host Worker", () => {
 			webcredentials?: { apps: string[] };
 		};
 		const solstoneAppId = SOLSTONE_AASA.applinks.details[0].appIDs[0];
+		const solstoneMacAppId = SOLSTONE_AASA.applinks.details[1].appIDs[0];
 		const extroAppId = EXTRO_AASA.applinks.details[0].appIDs[0];
 
 		expect(res.status).toBe(200);
@@ -102,6 +107,7 @@ describe("link-host Worker", () => {
 		expect(body.applinks.details[0].components).toEqual([{ "/": "/x/sync" }]);
 		expect(body).not.toHaveProperty("webcredentials");
 		expect(JSON.stringify(body)).not.toContain(solstoneAppId);
+		expect(JSON.stringify(body)).not.toContain(solstoneMacAppId);
 	});
 
 	it("serves the solstone landing page on go.solstone.app", async () => {
