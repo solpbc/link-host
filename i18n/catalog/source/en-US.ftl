@@ -29,6 +29,8 @@ link.journal.body = open this place in your journal with the solstone app.
 
 link.journal.open = open in the solstone app
 
+link.journal.autoopen = open automatically from this browser next time
+
 link.journal.fallbacktitle = app didn't open?
 
 link.journal.fallbackbody = copy the full link from your chat into your usual browser, then try again.

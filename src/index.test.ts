@@ -142,7 +142,50 @@ describe("link-host Worker", () => {
 		expect(html).not.toMatch(/<script(?![^>]*src=)/);
 		expect(html).not.toMatch(/(?:src|url)\s*[=(]\s*["']?https?:/);
 		const script = await (await get("https://go.solstone.app/j.js")).text();
-		expect(script).not.toMatch(/fetch|XMLHttpRequest|sendBeacon|cookie|localStorage/);
+		expect(script).not.toMatch(/fetch|XMLHttpRequest|sendBeacon|cookie|sessionStorage|indexedDB/);
+		// Only the opt-in browser-local auto-open boolean ("1") touches localStorage;
+		// the token itself is never persisted.
+		expect(script).toContain('var AUTO_KEY = "solstone.journal.auto_open"');
+		expect(script).toContain('storage.setItem(AUTO_KEY, "1")');
+		expect(script).toContain("storage.removeItem(AUTO_KEY)");
+	});
+
+	it("renders the opt-in auto-open toggle only on eligible desktop non-Safari browsers", async () => {
+		const eligible = [
+			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36 Edg/158.0.0.0",
+			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36",
+			"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:161.0) Gecko/20100101 Firefox/161.0",
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+			"Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0",
+		];
+		for (const ua of eligible) {
+			const html = await (
+				await get("https://go.solstone.app/j", { headers: { "User-Agent": ua } })
+			).text();
+			expect(html).toContain('data-target="scheme"');
+			expect(html).toContain('id="auto-open"');
+			expect(html).toContain('id="auto-open-label" hidden');
+			expect(html).not.toContain("checked");
+		}
+
+		const excluded = [
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
+			"Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Mobile/15E148 Safari/604.1",
+			"Mozilla/5.0 (iPad; CPU OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/157.0.0.0 Mobile/15E148 Safari/604.1",
+			"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/60.5 Safari/605.1.15",
+			"Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Claude/2.31226.1 Chrome/152.0.7977.130 Safari/537.36",
+			"Mozilla/5.0 (X11; CrOS x86_64 16000.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+			"",
+		];
+		for (const ua of excluded) {
+			const html = await (
+				await get("https://go.solstone.app/j", { headers: { "User-Agent": ua } })
+			).text();
+			expect(html).not.toContain('id="auto-open"');
+		}
 	});
 
 	it("offers a copy button instead of the app button inside Claude's built-in browser", async () => {

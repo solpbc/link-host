@@ -24,14 +24,13 @@ iOS Universal Links and Android App Links require an
 `apple-app-site-association` and `assetlinks.json` file at the URL's host. This
 Worker serves two app-association handoff hosts from one codebase:
 
-- `go.solstone.app` for solstone pair-flow links.
+- `go.solstone.app` for solstone pair-flow (`/p`) and journal (`/j`) links.
 - `link.solpbc.org` for extro sync links.
 
-Today `go.solstone.app` is consumed by
-[sol private link (spl)](https://github.com/solpbc/spl) pair-flow QR codes:
-scanning a `https://go.solstone.app/p#…` QR can open the solstone app
-when it is installed. Otherwise the fallback page links to the App Store or
-Play Store. After installing, the owner can open a valid pairing link.
+Today `go.solstone.app` serves [private network](https://github.com/solpbc/spl)
+pair-flow QR codes (`/p#…`) and journal links (`/j#…`): opening a link opens
+the solstone app when it is installed, or lands on the fallback page with links
+to the App Store, Google Play, and desktop installs.
 
 Future sol pbc apps add their own paths to the relevant host via a small PR.
 
@@ -39,18 +38,20 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
   `https://link.solpbc.org`).
 - **License:** [AGPL-3.0-only](LICENSE).
 - **Not the relay.** This Worker serves the two handoff hosts:
-  `go.solstone.app` for solstone pair-flow and `link.solpbc.org` for extro sync.
+  `go.solstone.app` for solstone pair-flow and journal links, and
+  `link.solpbc.org` for extro sync.
   They serve AASA/assetlinks + install-fallback pages, hold no keys, see no
   payload, and run no relay.
 
   `link.solstone.app` is a different service: the hosted
-  [spl](https://github.com/solpbc/spl) `spl-relay` (`/enroll`, `/session`,
+  [private network](https://github.com/solpbc/spl) `spl-relay` (`/enroll`, `/session`,
   `/tunnel`, the JWT `iss`, `/.well-known/jwks.json`). It lives in the `spl`
   repo, not this Worker.
 
-  Rule of thumb: solstone pair QR → `go.solstone.app/p`; extro sync link →
-  `link.solpbc.org/x/sync`; anything that enrolls, issues a token, or carries
-  tunnel bytes → `link.solstone.app`. Never cross handoff with relay.
+  Rule of thumb: solstone pair QR → `go.solstone.app/p`; solstone journal link →
+  `go.solstone.app/j`; extro sync link → `link.solpbc.org/x/sync`; anything that
+  enrolls, issues a token, or carries tunnel bytes → `link.solstone.app`. Never
+  cross handoff with relay.
 - **Status:** solstone AASA carries the iOS/iPadOS app
   (`7QCG8V4M6H.app.solstone.swift`, claiming `/p`, `/j`, and `webcredentials`)
   and the macOS app (`7QCG8V4M6H.app.solstone.observer`, claiming `/j` only; in
@@ -58,9 +59,9 @@ Future sol pbc apps add their own paths to the relevant host via a small PR.
   extro AASA carries `7QCG8V4M6H.org.solpbc.extro`.
   assetlinks on `go.solstone.app` claims the shipped Android phone package
   (`app.solstone.observer.phone`) with both the direct-release signing certificate
-  and the Play App Signing certificate. The watch, glasses, and validation
-  packages are deliberately unclaimed. File shape + headers + landing pages
-  validate cleanly today; the iOS Universal Link handoff is wireable now.
+  and the Play App Signing certificate. Only the phone package is claimed.
+  File shape + headers + landing pages validate cleanly today; the iOS
+  Universal Link handoff is wireable now.
 
 ## privacy properties
 
@@ -72,6 +73,10 @@ These are structural, not policy:
 2. **The pages set no cookies and run no analytics or third-party scripts.**
    The pairing and journal-link scripts are served from this origin. They copy
    the exact fragment into an explicit app-opening link and make no requests.
+   On supported desktop browsers, `/j` offers an opt-in checkbox that saves only
+   a single boolean preference in `localStorage` (`"1"` when enabled, removed
+   when unchecked, never any fragment or identifier) so repeat visits can open
+   the solstone app without another click.
    Inside Claude's desktop built-in browser, the journal-link page instead copies
    the link to the clipboard when the owner clicks, and still makes no requests.
    CSP blocks scripted connection APIs.
@@ -98,7 +103,7 @@ External API calls from the Worker: none.
 | `GET /p` | solstone landing page (HTML, strict CSP) |
 | `GET /p.js` | the desktop pairing page's script (`text/javascript`, `Cache-Control: public, max-age=300`) |
 | `GET /j` | journal-link fallback page (HTML, strict CSP) |
-| `GET /j.js` | journal-link fragment validation and explicit handoff script |
+| `GET /j.js` | journal-link fragment validation and handoff script (explicit open, opt-in desktop auto-open, or copy in Claude's browser) |
 | `GET /j-assets/*` | vendored font and official store badges; unknown assets return `404` |
 | `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
 | `GET /robots.txt` | disallow `/p`, `/j` and `/x`, allow `/` and `/.well-known/*` |
@@ -148,10 +153,17 @@ biome.json            lint + format
 outer grammar: 1–512 base64url characters without padding, optionally followed
 by `~` and six digits. It neither decrypts nor re-encodes the token.
 
-An explicit button opens `solstone://open#<token>` on iPhone, iPad and supported
-desktops. Android uses an `intent:` link for the phone package. The browser
-fallback stays visible beneath the button; installation help expands below it.
-The page cannot detect installation, app launch or journal reachability.
+An explicit button opens `solstone://open#<token>` on iphone, ipad and supported
+desktops. Android uses an `intent:` link for the phone package. On desktop
+browsers with a persistent custom-scheme allowlist (Chromium- and Firefox-family
+browsers on windows, mac and linux; excluding Safari, mobile browsers and
+Claude's built-in browser), an unchecked-by-default option lets the owner opt in
+to opening future `/j` visits in the solstone app automatically from that
+browser. The preference is stored locally in `localStorage` as a single `"1"`
+flag and removed when unchecked; no token is ever stored, and the explicit
+button, opt-out checkbox and browser fallback remain visible. Installation help
+expands below them. The page cannot detect installation, app launch or journal
+reachability.
 
 Claude's desktop built-in browser doesn't open app links like `solstone:`, so
 the button can't work there. The page recognizes that browser by the
@@ -204,19 +216,19 @@ certs are auto-provisioned by Cloudflare.
 
 ## editing content
 
-| who | file | what they edit |
-|---|---|---|
-| CSO | `src/assetlinks.ts` | the Android package claim and the direct-release and Play App Signing certificate fingerprints |
-| CMO | `src/landing.ts` | solstone landing page copy slots (H1, sub, CTAs, footer); App Store / Play Store URLs once each listing is live |
-| CMO | `src/landing-extro.ts` | extro fallback copy |
-| CMO | `src/index-page.ts` | bare host page copy |
+| file | what it controls |
+|---|---|
+| `src/assetlinks.ts` | the Android package claim and the direct-release and Play App Signing certificate fingerprints |
+| `src/aasa.ts` | Apple Universal Links claims for `go.solstone.app` and `link.solpbc.org` |
+| `i18n/catalog/source/en-US.ftl` | all rendered English copy across `/p`, `/j`, `/x/sync`, and `/` (regenerated per [`i18n/README.md`](i18n/README.md)) |
+| `src/landing.ts`, `src/journal.ts`, `src/landing-extro.ts`, `src/index-page.ts` | HTML structure, styles, store URLs, and same-origin handoff scripts |
 
 All edits flow PR → manual deploy.
 
 ## adding a new sol pbc app
 
 Day-1 claims are split by host: solstone on `go.solstone.app`, extro on
-`link.solpbc.org`. Future products (aha, vit, etc.) add their own entries to
+`link.solpbc.org`. Future sol pbc apps (such as vit) add their own entries to
 the relevant host's AASA payload:
 
 1. Add a new bundle + path block to `src/aasa.ts` under the relevant host
@@ -231,14 +243,14 @@ the relevant host's AASA payload:
 
 After deploy, check:
 
-1. **Solstone AASA shape:** paste `https://go.solstone.app` into the [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) and confirm the file parses. Verify the actual handoff on an iPhone with the app installed.
-2. **Extro AASA shape:** paste `https://link.solpbc.org` and confirm only the extro claim parses.
+1. **solstone AASA shape:** paste `https://go.solstone.app` into the [Branch.io AASA validator](https://branch.io/resources/aasa-validator/) and confirm the file parses. Verify the actual handoff on an iphone with the app installed.
+2. **extro AASA shape:** paste `https://link.solpbc.org` and confirm only the extro claim parses.
 3. **assetlinks shape:** validate `https://go.solstone.app` with [Google's Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator). Then install an APK signed by the certificate being checked and inspect Android's App Links state. The installed app must also declare the matching `autoVerify` intent filter.
-4. **CSP:** open `https://go.solstone.app/p` and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself; the mac and windows `/p` page also loads `/p.js`).
+4. **CSP:** open `https://go.solstone.app/p`, `https://go.solstone.app/j`, and `https://link.solpbc.org/x/sync` in a browser, open devtools, and confirm no third-party network requests (network tab should show only the page itself, plus `/p.js` on desktop `/p` pages except ChromeOS, and `/j.js` and vendored `/j-assets/*` on `/j`).
 
 ## see also
 
-- [sol private link (spl)](https://github.com/solpbc/spl), the first consumer
-  of `go.solstone.app`, the pair-flow QR codes for the solstone app.
+- [private network](https://github.com/solpbc/spl), the first consumer
+  of `go.solstone.app`, carrying pair-flow QR codes for the solstone app.
 - [sol pbc](https://solpbc.org), public benefit corporation operating these
   systems.

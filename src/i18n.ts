@@ -47,6 +47,7 @@ export const MESSAGE_IDS = [
 	"link.journal.title",
 	"link.journal.body",
 	"link.journal.open",
+	"link.journal.autoopen",
 	"link.journal.fallbacktitle",
 	"link.journal.fallbackbody",
 	"link.journal.panebody",

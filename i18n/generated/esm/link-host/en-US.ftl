@@ -18,6 +18,8 @@ m6c696e6b2e6a6f75726e616c2e6170706c656261646765 = Download on the App Store
 
 m6c696e6b2e6a6f75726e616c2e6174747269627574696f6e = Apple and the Apple logo are trademarks of Apple Inc. App Store is a service mark of Apple Inc. Google Play and the Google Play logo are trademarks of Google LLC.
 
+m6c696e6b2e6a6f75726e616c2e6175746f6f70656e = open automatically from this browser next time
+
 m6c696e6b2e6a6f75726e616c2e626f6479 = open this place in your journal with the solstone app.
 
 m6c696e6b2e6a6f75726e616c2e636f70696564 = copied

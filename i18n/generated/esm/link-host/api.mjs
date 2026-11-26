@@ -76,6 +76,12 @@ const MESSAGES = {
     arguments: [
     ],
   },
+  "link.journal.autoopen": {
+    resourceKey: "m6c696e6b2e6a6f75726e616c2e6175746f6f70656e",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
   "link.journal.body": {
     resourceKey: "m6c696e6b2e6a6f75726e616c2e626f6479",
     formatIntent: "text",

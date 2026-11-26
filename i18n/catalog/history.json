@@ -128,6 +128,18 @@
       "selector": null
     },
     {
+      "id": "link.journal.autoopen",
+      "resource": "m6c696e6b2e6a6f75726e616c2e6175746f6f70656e",
+      "namespace": "link.journal",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
       "id": "link.journal.body",
       "resource": "m6c696e6b2e6a6f75726e616c2e626f6479",
       "namespace": "link.journal",

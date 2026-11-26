@@ -219,3 +219,230 @@ describe("journal copy handoff in Claude's built-in browser", () => {
 		expect((p.elements.ready as { hidden: boolean }).hidden).toBe(true);
 	});
 });
+
+interface FakeStorage {
+	getItem(key: string): string | null;
+	setItem(key: string, value: string): void;
+	removeItem(key: string): void;
+}
+
+function autoOpenPage(
+	options: {
+		hash?: string;
+		target?: string;
+		storage?: FakeStorage | "throw" | null;
+		navType?: string;
+	} = {},
+) {
+	const { hash = "#_valid", target = "scheme", navType = "navigate" } = options;
+	const listeners = new Map<string, () => void>();
+	const linkEvents = new Map<string, (event: { preventDefault(): void }) => void>();
+	const attrs = new Map<string, string>();
+	const assigned: string[] = [];
+	const store = new Map<string, string>();
+	let onToggle: (() => void) | undefined;
+
+	const defaultStorage: FakeStorage = {
+		getItem: (key) => store.get(key) ?? null,
+		setItem: (key, value) => {
+			store.set(key, value);
+		},
+		removeItem: (key) => {
+			store.delete(key);
+		},
+	};
+	const storageImpl = options.storage === undefined ? defaultStorage : options.storage;
+
+	const link = {
+		hidden: false,
+		setAttribute: (key: string, value: string) => attrs.set(key, value),
+		removeAttribute: (key: string) => attrs.delete(key),
+		addEventListener: (event: string, fn: (event: { preventDefault(): void }) => void) =>
+			linkEvents.set(event, fn),
+	};
+	const autoLabel = { hidden: true };
+	const autoBox = {
+		checked: false,
+		addEventListener: (event: string, fn: () => void) => {
+			if (event === "change") onToggle = fn;
+		},
+	};
+	const section = () => ({ hidden: false, querySelector: () => ({ textContent: "heading" }) });
+	const elements: Record<string, unknown> = {
+		"open-app": link,
+		"auto-open-label": autoLabel,
+		"auto-open": autoBox,
+		ready: section(),
+		missing: section(),
+		invalid: section(),
+	};
+	const location = {
+		hash,
+		href: `https://go.solstone.app/j${hash}`,
+		assign: (url: string) => {
+			assigned.push(url);
+		},
+	};
+	const document = {
+		title: "",
+		getElementById: (id: string) => elements[id],
+		querySelector: () => ({ getAttribute: () => target }),
+	};
+	const win: Record<string, unknown> = {
+		addEventListener: (event: string, fn: () => void) => listeners.set(event, fn),
+		performance: {
+			getEntriesByType: (kind: string) => (kind === "navigation" ? [{ type: navType }] : []),
+		},
+	};
+	if (storageImpl === "throw") {
+		Object.defineProperty(win, "localStorage", {
+			get() {
+				throw new Error("SecurityError");
+			},
+		});
+	} else if (storageImpl !== null) {
+		win.localStorage = storageImpl;
+	}
+
+	new Function("window", "document", "location", JOURNAL_SCRIPT)(win, document, location);
+
+	return {
+		store,
+		assigned,
+		autoLabel,
+		autoBox,
+		location,
+		attrs,
+		toggle(checked: boolean) {
+			autoBox.checked = checked;
+			onToggle?.();
+		},
+		event(name: string) {
+			listeners.get(name)?.();
+		},
+	};
+}
+
+describe("journal opt-in auto-open", () => {
+	it("stays off by default, reveals the toggle, and only stores '1' when checked", () => {
+		const p = autoOpenPage({ hash: "#_tok1~091500" });
+		expect(p.autoLabel.hidden).toBe(false);
+		expect(p.autoBox.checked).toBe(false);
+		expect(p.assigned).toEqual([]);
+		expect([...p.store.entries()]).toEqual([]);
+
+		// Checking stores only the boolean flag and does not navigate on toggle.
+		p.toggle(true);
+		expect([...p.store.entries()]).toEqual([["solstone.journal.auto_open", "1"]]);
+		expect(p.assigned).toEqual([]);
+
+		// Unchecking removes the key completely.
+		p.toggle(false);
+		expect([...p.store.entries()]).toEqual([]);
+	});
+
+	it("auto-opens on initial load and on a new hashchange token, never on pageshow or duplicate token", () => {
+		const backing = new Map<string, string>([["solstone.journal.auto_open", "1"]]);
+		const storage: FakeStorage = {
+			getItem: (k) => backing.get(k) ?? null,
+			setItem: (k, v) => {
+				backing.set(k, v);
+			},
+			removeItem: (k) => {
+				backing.delete(k);
+			},
+		};
+		const p = autoOpenPage({ hash: "#_first~120000", storage });
+		expect(p.autoBox.checked).toBe(true);
+		expect(p.assigned).toEqual(["solstone://open#_first~120000"]);
+
+		// pageshow (bfcache / back-forward) must never re-trigger auto-open.
+		p.event("pageshow");
+		expect(p.assigned).toEqual(["solstone://open#_first~120000"]);
+
+		// Same token hashchange must not double-fire.
+		p.event("hashchange");
+		expect(p.assigned).toEqual(["solstone://open#_first~120000"]);
+
+		// A distinct valid token fires once.
+		p.location.hash = "#_second";
+		p.event("hashchange");
+		expect(p.assigned).toEqual(["solstone://open#_first~120000", "solstone://open#_second"]);
+
+		// Invalid token never fires and clears deduplication state.
+		p.location.hash = "#bad/token";
+		p.event("hashchange");
+		expect(p.assigned).toEqual(["solstone://open#_first~120000", "solstone://open#_second"]);
+
+		// Returning to a valid token after invalid fires again.
+		p.location.hash = "#_second";
+		p.event("hashchange");
+		expect(p.assigned).toEqual([
+			"solstone://open#_first~120000",
+			"solstone://open#_second",
+			"solstone://open#_second",
+		]);
+	});
+
+	it("skips auto-open on back_forward navigation even without bfcache", () => {
+		const backing = new Map<string, string>([["solstone.journal.auto_open", "1"]]);
+		const storage: FakeStorage = {
+			getItem: (k) => backing.get(k) ?? null,
+			setItem: (k, v) => {
+				backing.set(k, v);
+			},
+			removeItem: (k) => {
+				backing.delete(k);
+			},
+		};
+		const p = autoOpenPage({ hash: "#_tok1", storage, navType: "back_forward" });
+		expect(p.autoBox.checked).toBe(true);
+		expect(p.assigned).toEqual([]);
+	});
+
+	it("syncs opt-out changes from another tab before firing hashchange or pageshow", () => {
+		const backing = new Map<string, string>([["solstone.journal.auto_open", "1"]]);
+		const storage: FakeStorage = {
+			getItem: (k) => backing.get(k) ?? null,
+			setItem: (k, v) => {
+				backing.set(k, v);
+			},
+			removeItem: (k) => {
+				backing.delete(k);
+			},
+		};
+		const p = autoOpenPage({ hash: "#_tok1", storage });
+		expect(p.assigned).toEqual(["solstone://open#_tok1"]);
+
+		// Another tab unchecks the preference.
+		backing.delete("solstone.journal.auto_open");
+		p.location.hash = "#_tok2";
+		p.event("hashchange");
+		expect(p.autoBox.checked).toBe(false);
+		expect(p.assigned).toEqual(["solstone://open#_tok1"]);
+	});
+
+	it("stays cleanly hidden when localStorage throws or is unavailable", () => {
+		const thrown = autoOpenPage({ hash: "#_tok1", storage: "throw" });
+		expect(thrown.autoLabel.hidden).toBe(true);
+		expect(thrown.assigned).toEqual([]);
+
+		const absent = autoOpenPage({ hash: "#_tok1", storage: null });
+		expect(absent.autoLabel.hidden).toBe(true);
+		expect(absent.assigned).toEqual([]);
+	});
+
+	it("reverts the checkbox cleanly if setItem throws QuotaExceededError", () => {
+		const storage: FakeStorage = {
+			getItem: () => null,
+			setItem: () => {
+				throw new Error("QuotaExceededError");
+			},
+			removeItem: () => undefined,
+		};
+		const p = autoOpenPage({ hash: "#_tok1", storage });
+		expect(p.autoLabel.hidden).toBe(false);
+		p.toggle(true);
+		expect(p.autoBox.checked).toBe(false);
+	});
+});

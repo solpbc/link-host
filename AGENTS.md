@@ -3,19 +3,20 @@
 `link-host` is a single Cloudflare Worker serving sol pbc's universal native-app
 handoff surfaces, dispatched by request host: `go.solstone.app` (solstone
 universal-link surface) and `link.solpbc.org` (extro sync surface). It holds no
-keys, sees no payload, and runs no relay. It serves AASA / `assetlinks.json` /
-install-fallback HTML and nothing else.
+keys, sees no payload, and runs no relay. It serves AASA, `assetlinks.json`,
+and handoff fallback pages (with their same-origin scripts and vendored assets),
+and nothing else.
 
 **Read [`README.md`](README.md) first.** It is the authoritative spec for the
-route table, the privacy properties, the host-split, the content-edit ownership
-map (who edits which `src/*.ts`), the "never cross handoff with relay" rule, and
+route table, the privacy properties, the host-split, the content-edit map,
+the "never cross handoff with relay" rule, and
 the deploy/verify steps. This file does not restate that; it covers how to work
 in the repo correctly. `CLAUDE.md` and `GEMINI.md` are symlinks to this file.
 
 ## Orientation
 
 - One Worker, two custom-domain routes (`wrangler.toml`), host-dispatched by
-  `hostKind()` in `src/index.ts`. Solstone claims live on `go.solstone.app`;
+  `hostKind()` in `src/index.ts`. solstone claims live on `go.solstone.app`;
   extro claims on `link.solpbc.org`. They do **not** bleed across hosts. A
   solstone path on the extro host is a `404`, and vice-versa. Keep that split
   hard when adding anything.
@@ -23,7 +24,7 @@ in the repo correctly. `CLAUDE.md` and `GEMINI.md` are symlinks to this file.
   TypeScript string module in `src/`, inlined by the router. **There is no
   `static/` directory** and no build step for content. English sentences live
   in the catalog, below. Edit the `.ts` module for routes, markup and headers.
-- The whole surface is `GET`-only HTML/JSON. Non-GET verbs return `405`;
+- The whole surface is read-only (`GET`/`HEAD`). Other HTTP verbs return `405`;
   unknown paths return `404`. There is no API, no database, no auth, no state.
 
 ## English copy
@@ -64,11 +65,12 @@ A change that weakens any of them is the wrong change regardless of size:
   `wrangler tail` streams live and doesn't write to Workers Logs.
 - **No beaconing surface.** The only JavaScript is the pairing and journal-link
   pages' same-origin scripts. They copy the fragment into the button's
-  app-opening link, or, inside Claude's built-in browser, copy the full link to
-  the clipboard on a click, and make no requests. The pages' CSP blocks scripted connection APIs
-  with `connect-src 'none'`. Never add analytics,
-  telemetry, or a third-party script; the [sol pbc data covenants](https://solpbc.org)
-  forbid them. No cookies, anywhere.
+  app-opening link, optionally remember an opt-in browser-local auto-open boolean
+  in `localStorage` on `/j` (never a token), or, inside Claude's built-in
+  browser, copy the full link to the clipboard on a click, and make no requests.
+  The pages' CSP blocks scripted connection APIs with `connect-src 'none'`.
+  Never add analytics, telemetry, or a third-party script; the
+  [sol pbc data covenants](https://solpbc.org) forbid them. No cookies, anywhere.
 - **No external calls.** The Worker makes zero outbound fetches. If you reach for
   one, stop. That work belongs upstream.
 - **No keys, no relay.** This Worker never holds a key or carries tunnel bytes.

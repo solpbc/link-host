@@ -1,0 +1,16 @@
+{
+  "description": "Opt-in checkbox label to open future journal links automatically in the solstone app from this browser.",
+  "context": "Journal-link handoff page on supported desktop browsers; unchecked by default and stored only in this browser. The page cannot detect installation or launch success.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 64,
+  "source_revision": "955d520354138180d239afa6273ed8164a6dc3f12ebd7486f0e64a8feaeac634",
+  "risk": "routine",
+  "auto_merge": true
+}
