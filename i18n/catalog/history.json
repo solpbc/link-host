@@ -50,6 +50,60 @@
       "selector": null
     },
     {
+      "id": "link.garmin.body",
+      "resource": "m6c696e6b2e6761726d696e2e626f6479",
+      "namespace": "link.garmin",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.garmin.cta",
+      "resource": "m6c696e6b2e6761726d696e2e637461",
+      "namespace": "link.garmin",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.garmin.heading",
+      "resource": "m6c696e6b2e6761726d696e2e68656164696e67",
+      "namespace": "link.garmin",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [],
+      "selector": null
+    },
+    {
+      "id": "link.garmin.title",
+      "resource": "m6c696e6b2e6761726d696e2e7469746c65",
+      "namespace": "link.garmin",
+      "owner": "link-host",
+      "tombstone": false,
+      "replacement": null,
+      "format_intent": "text",
+      "arguments": [],
+      "protected_slots": [
+        {
+          "name": "host",
+          "kind": "url",
+          "value": "go.solstone.app"
+        }
+      ],
+      "selector": null
+    },
+    {
       "id": "link.host.operatedbysolpbc",
       "resource": "m6c696e6b2e686f73742e6f706572617465646279736f6c706263",
       "namespace": "link.host",

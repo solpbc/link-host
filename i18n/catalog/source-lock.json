@@ -130,6 +130,34 @@
       ]
     },
     {
+      "id": "link.garmin.body",
+      "source": "87f20cf0336dea260bf21f23c4e5b546036c5a750ca7147f06bbed6b8e3c11ad",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.garmin.cta",
+      "source": "7e98ba008ccc7d0453abcaf8ec9f09889fe12a97faaddd2b7f7f7e09da26f8de",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.garmin.heading",
+      "source": "87d06b49166e961c5fed4085578317231d761dee02da9cb75eb348cb7e1aa6df",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+      "locales": []
+    },
+    {
+      "id": "link.garmin.title",
+      "source": "8bd0057846915602ce757eb94bc41dbc54029213152871077489fcf4b9ab9d8f",
+      "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",
+      "protected": "6bef96992902437348d1ee56a63042c402f77c820b6dea5b2f95bcbe7565e8f9",
+      "locales": []
+    },
+    {
       "id": "link.host.operatedbysolpbc",
       "source": "c6cf4696aeebeaf7954e6799982f3cf8b9e5db95574463a8566f2c3afa8c8fe2",
       "contract": "8a5ccf516e1ddd1e6845a51578bf3090e7732eef71f84117434e952b20202586",

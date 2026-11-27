@@ -118,6 +118,21 @@ describe("link-host Worker", () => {
 		expect(res.headers.get("Content-Security-Policy")).toBe(HTML_CSP);
 	});
 
+	it("serves the static Garmin companion fallback only on go.solstone.app", async () => {
+		const res = await get("https://go.solstone.app/garmin");
+		expect(res.status).toBe(200);
+		expect(res.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
+		expect(res.headers.get("Content-Security-Policy")).toBe(HTML_CSP);
+		expect(res.headers.get("Set-Cookie")).toBeNull();
+		const html = await res.text();
+		expect(html).toContain(
+			"https://play.google.com/store/apps/details?id=app.solstone.observer.phone",
+		);
+		expect(html).not.toContain("<script");
+		expect((await get("https://link.solpbc.org/garmin")).status).toBe(404);
+		expect((await get("https://go.solstone.app/garmin", { method: "POST" })).status).toBe(405);
+	});
+
 	it.each([
 		"/j",
 		"/j.js",

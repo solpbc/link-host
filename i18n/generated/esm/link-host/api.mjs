@@ -40,6 +40,30 @@ const MESSAGES = {
     arguments: [
     ],
   },
+  "link.garmin.body": {
+    resourceKey: "m6c696e6b2e6761726d696e2e626f6479",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.garmin.cta": {
+    resourceKey: "m6c696e6b2e6761726d696e2e637461",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.garmin.heading": {
+    resourceKey: "m6c696e6b2e6761726d696e2e68656164696e67",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
+  "link.garmin.title": {
+    resourceKey: "m6c696e6b2e6761726d696e2e7469746c65",
+    formatIntent: "text",
+    arguments: [
+    ],
+  },
   "link.host.operatedbysolpbc": {
     resourceKey: "m6c696e6b2e686f73742e6f706572617465646279736f6c706263",
     formatIntent: "text",

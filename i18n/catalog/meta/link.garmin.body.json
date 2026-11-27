@@ -1,0 +1,16 @@
+{
+  "description": "Body copy for the Garmin watch companion fallback page.",
+  "context": "Explains the local Garmin Connect hop and directs the owner to install the solstone Android app and reopen the link from the watch.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 280,
+  "source_revision": "87f20cf0336dea260bf21f23c4e5b546036c5a750ca7147f06bbed6b8e3c11ad",
+  "risk": "routine",
+  "auto_merge": true
+}

@@ -39,7 +39,7 @@ import { PACKAGED_LOCALES, resolveLocale, t } from "./i18n";
 import { renderIndex } from "./index-page";
 import { JOURNAL_SCRIPT, renderJournal } from "./journal";
 import { JOURNAL_ASSETS } from "./journal-assets";
-import { DESKTOP_SCRIPT, renderLanding } from "./landing";
+import { DESKTOP_SCRIPT, renderGarmin, renderLanding } from "./landing";
 import { renderExtroSync } from "./landing-extro";
 import { ROBOTS } from "./robots";
 
@@ -180,6 +180,13 @@ export default {
 					Vary: varyLocale ? "User-Agent, Accept-Language" : "User-Agent",
 				},
 			);
+		}
+
+		// Garmin watch companion setup fallback page. Only reached when Android
+		// did not open an installed solstone phone app via verified App Links.
+		if (url.pathname === "/garmin") {
+			if (kind !== "solstone") return notFound(locale);
+			return htmlResponse(renderGarmin(locale), 200, varyLocale ? { Vary: "Accept-Language" } : {});
 		}
 
 		// The desktop landing page's one script (see `DESKTOP_SCRIPT`).

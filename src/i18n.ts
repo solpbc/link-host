@@ -65,6 +65,11 @@ export const MESSAGE_IDS = [
 	"link.journal.googlebadge",
 	"link.journal.attribution",
 
+	"link.garmin.title",
+	"link.garmin.heading",
+	"link.garmin.body",
+	"link.garmin.cta",
+
 	"link.extro.openextrolinksolpbcorg",
 	"link.extro.openextroonyourphone",
 	"link.extro.solpbcopensourcethispagecollectsnothing",

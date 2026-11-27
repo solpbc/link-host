@@ -71,6 +71,18 @@ export function renderLanding(userAgent: string, locale: string = SOURCE_LOCALE)
 	);
 }
 
+export function renderGarmin(locale: string = SOURCE_LOCALE): string {
+	return page(
+		t("link.garmin.title", locale),
+		`<h1>${t("link.garmin.heading", locale)}</h1>
+		<p class="sub">${t("link.garmin.body", locale)}</p>
+		<div class="ctas">
+			<a class="cta cta-android" href="${ANDROID_STORE_URL}">${t("link.garmin.cta", locale)}</a>
+		</div>`,
+		locale,
+	);
+}
+
 // The store buttons stay on the desktop page, second: an iPad's Safari
 // reports a desktop user agent, and an iPad without the app lands here.
 function renderDesktop(offerOpenApp: boolean, locale: string): string {

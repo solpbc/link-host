@@ -1,0 +1,23 @@
+{
+  "description": "HTML document title for the Garmin watch companion fallback page.",
+  "context": "Shown when a Garmin watch owner taps the companion setup link on a phone without the solstone Android app installed. The host is this site, not a translation.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 60,
+  "source_revision": "8bd0057846915602ce757eb94bc41dbc54029213152871077489fcf4b9ab9d8f",
+  "risk": "routine",
+  "auto_merge": true,
+  "protected_slots": [
+    {
+      "name": "host",
+      "kind": "url",
+      "value": "go.solstone.app"
+    }
+  ]
+}

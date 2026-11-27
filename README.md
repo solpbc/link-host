@@ -105,8 +105,9 @@ External API calls from the Worker: none.
 | `GET /j` | journal-link fallback page (HTML, strict CSP) |
 | `GET /j.js` | journal-link fragment validation and handoff script (explicit open, opt-in desktop auto-open, or copy in Claude's browser) |
 | `GET /j-assets/*` | vendored font and official store badges; unknown assets return `404` |
+| `GET /garmin` | static Garmin watch companion fallback page pointing to the Android listing (HTML, strict CSP, zero scripts) |
 | `GET /` | bare host page (HTML, strict CSP, host-derived title/H1, `X-Robots-Tag: noindex`) |
-| `GET /robots.txt` | disallow `/p`, `/j` and `/x`, allow `/` and `/.well-known/*` |
+| `GET /robots.txt` | disallow `/p`, `/j`, `/garmin` and `/x`, allow `/` and `/.well-known/*` |
 | `GET /x/sync` | `404` |
 
 ### `link.solpbc.org`

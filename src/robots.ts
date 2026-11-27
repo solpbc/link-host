@@ -13,6 +13,7 @@
 export const ROBOTS = `User-agent: *
 Disallow: /p
 Disallow: /j
+Disallow: /garmin
 Disallow: /x
 Allow: /.well-known/
 Allow: /

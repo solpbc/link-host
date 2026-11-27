@@ -6,6 +6,14 @@ m6c696e6b2e657874726f2e736f6c7062636f70656e736f757263657468697370616765636f6c6c6
 
 m6c696e6b2e657874726f2e746869736c696e6b77616b65737570657874726f6d6f62696c65746f73796e63 = this link wakes up extro-mobile to sync a file you shared.
 
+m6c696e6b2e6761726d696e2e626f6479 = voice audio goes from your watch through Garmin Connect on your android phone to the solstone app, and from there into your journal. install the solstone app for android, then open this link again from your watch.
+
+m6c696e6b2e6761726d696e2e637461 = get the solstone app for android
+
+m6c696e6b2e6761726d696e2e68656164696e67 = connect your Garmin watch.
+
+m6c696e6b2e6761726d696e2e7469746c65 = connect your Garmin watch · { "go.solstone.app" }
+
 m6c696e6b2e686f73742e6f706572617465646279736f6c706263 = operated by sol pbc.
 
 m6c696e6b2e686f73742e746869736973736f6c70626373756e6976657273616c61707068616e646f6666 = links at this address open in sol pbc's apps. what a link carries sits after the # in its address, and that part never reaches this server. open source at { "github.com/solpbc/link-host" }.

@@ -62,3 +62,8 @@ link.journal.applebadge = Download on the App Store
 link.journal.googlebadge = Get it on Google Play
 
 link.journal.attribution = Apple and the Apple logo are trademarks of Apple Inc. App Store is a service mark of Apple Inc. Google Play and the Google Play logo are trademarks of Google LLC.
+
+link.garmin.title = connect your Garmin watch · { $host }
+link.garmin.heading = connect your Garmin watch.
+link.garmin.body = voice audio goes from your watch through Garmin Connect on your android phone to the solstone app, and from there into your journal. install the solstone app for android, then open this link again from your watch.
+link.garmin.cta = get the solstone app for android

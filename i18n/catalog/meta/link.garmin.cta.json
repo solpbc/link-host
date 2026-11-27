@@ -1,0 +1,16 @@
+{
+  "description": "Primary Android install button label on the Garmin watch fallback page.",
+  "context": "Links to the solstone Android app listing on Google Play.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 48,
+  "source_revision": "7e98ba008ccc7d0453abcaf8ec9f09889fe12a97faaddd2b7f7f7e09da26f8de",
+  "risk": "routine",
+  "auto_merge": true
+}

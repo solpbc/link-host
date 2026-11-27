@@ -1,0 +1,16 @@
+{
+  "description": "Heading for the Garmin watch companion fallback page.",
+  "context": "Shown when a Garmin watch owner taps the companion setup link on a phone without the solstone Android app installed.",
+  "surfaces": [
+    "link-host"
+  ],
+  "bundles": [
+    "link-host"
+  ],
+  "arguments": [],
+  "format_intent": "text",
+  "max_length": 48,
+  "source_revision": "87d06b49166e961c5fed4085578317231d761dee02da9cb75eb348cb7e1aa6df",
+  "risk": "routine",
+  "auto_merge": true
+}
